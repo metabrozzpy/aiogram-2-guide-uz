@@ -18,7 +18,7 @@ copyright: Copyright &copy; 2020-2022 Groosha
 theme:
   name: material
   custom_dir: book_src/overrides
-  language: ru
+  language: uz
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -60,20 +60,19 @@ markdown_extensions:
       permalink: true
 
 nav:
-  - 'Kirish': index.md
-  - 'Aiogram bilan tanishuv': quickstart.md
-  - 'Xabarlar bilan ishlash': messages.md
-  - 'Tugmalar': buttons.md
-  - 'FSM (Steytlar)': fsm.md
-  - 'Inlayn rejimi': inline_mode.md
-
+  - "Kirish": index.md
+  - "Aiogram bilan tanishuv": quickstart.md
+  - "Xabarlar bilan ishlash": messages.md
+  - "Tugmalar": buttons.md
+  - "FSM (Steytlar)": fsm.md
+  - "Inlayn rejimi": inline_mode.md
 
 plugins:
   - search:
       lang:
+        - uz
         - en
         - ru
-
 
 # Custom
 nav_name: "Mundarija"
