@@ -1,30 +1,25 @@
 ---
-title: Введение
+title: Kirish
 ---
 
-# **Добро пожаловать!**  
-С момента выхода [первой версии](https://mastergroosha.github.io/telegram-tutorial/) книги в 2015 году
-много чего изменилось как у Python, так и в Telegram (в частности, в их Bot API). 
-Да и библиотека [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI), на мой взгляд,
-не пережила проверку временем и стала приносить всё больше и больше проблем.
+# **Xush kelibsiz!**  
+2015 yilda kitobning [birinchi talqini](https://mastergroosha.github.io/telegram-tutorial/) chiqqandan beri
+Pythonda ham, Telegramda ham ko'p narsa o'zgardi (xususan, ularning Bot APIda).
+Ha va mening fikrimcha [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI) kutubxonasi bora-bora ko'proq muammolarni keltira boshladi.
 
-В этой, обновлённой версии книги, мы будем использовать библиотеки [aiogram](https://github.com/aiogram/aiogram) и [Telethon](https://github.com/LonamiWebs/Telethon), 
-а также разберёмся с некоторыми интересными подходами к обеспечению работы Telegram-ботов.
+Kitobning ushbu yangilangan talqinida biz [aiogram](https://github.com/aiogram/aiogram) va [Telethon](https://github.com/LonamiWebs/Telethon) kutubxonalardan foydalanamiz, 
+va shuningdek, biz Telegram botlar bilan bog'liq bir nechta qiziqarli yondashuvlarni ko'rib chiqamiz.
 
-**Для кого эта книга?**  
-Предполагается, что вы знакомы с программированием в целом и языком Python в частности, знаете, что такое "venv" и "pip", 
-а также способны понять и исправить "детские" ошибки вроде _SyntaxError_ и _IndentationError_. Найдите в интернете пару
-курсов по Python, пройдите их, а лишь затем принимайтесь за написание ботов, сэкономите себе время и нервные клетки.
+**Bu kitob kim uchun?**  
+Siz dasturlash va xususan Pythonni yaxshi bilsangiz, "venv" va "pip" nima ekanligi, hamda _SyntaxError_ va _IndentationError_ kabi "детский" xatolarni tushunish va tuzatishga qodir bo'lsangiz davom etishingiz mumkin. Agar xabaringiz bo'lmasa internetdan bir-ikkita Python kurslarini topib, ularni o'rganing va shundan keyingina botlarni yozishni boshlang, vaqtingizni va asab hujayralarini tejang.
 
-Во всех главах в качестве операционной системы мы будем использовать что-нибудь семейства GNU/Linux, 
-например, [Ubuntu](https://ubuntu.com/), Python 3.7 (в Virtual Environment) и среду разработки 
-[PyCharm Community Edition](https://www.jetbrains.com/ru-ru/pycharm/download/), впрочем, не возбраняется и [Visual Studio Code](https://code.visualstudio.com/).
-При этом пользователи Windows не в пролёте: всё, что касается кода, будет спокойно работать и у вас, а для специфичных вещей
-вроде systemd вы можете использовать Ubuntu в [VirtualBox](https://www.virtualbox.org).
+Barcha bo'limlarda biz GNU/Linux oilasidan operatsion tizim sifatida foydalanamiz,
+masalan, [Ubuntu](https://ubuntu.com/), Python 3.7 (Virtual muhitda) va dasturlash muhiti
+[PyCharm Community Edition](https://www.jetbrains.com/en-us/pycharm/download/), ammo [Visual Studio Code](https://code.visualstudio.com/) ishlatishga ruxsat.
+Shu bilan birga, Windows foydalanuvchilari xafa bo'lmang: kod bilan bog'liq hamma narsa sizda ham muammolarsiz ishlaydi, lekin systemd kabilarni Ubuntudan [VirtualBox](https://www.virtualbox.org)da foydalanishingiz mumkin.
 
 **P.S.**  
-Текст книги и исходные тексты в [соответствующем репозитории](https://github.com/MasterGroosha/aiogram-2-guide) 
-полностью бесплатны, издаются под лицензией MIT и доступны любому для скачивания, модификации и использования в любых целях. 
-Если вы хотите отблагодарить автора материально, можете сделать это через [Ю.Money](https://yoomoney.ru/to/41001515922197) 
-(пожалуйста, указывайте в комментариях, что это донат за книгу).  
-На всякий случай уточню, что любое пожертвование является добровольным и не даёт никаких преимуществ, кроме плюсика в карму.
+Kitob matni va [tegishli repo](https://github.com/MasterGroosha/aiogram-2-guide)dagi manbalar 
+butunlay bepul, MIT litsenziyasi ostida nashr etilgan va har kim yuklab olishi, o'zgartirishi va istalgan maqsadda foydalanishi mumkin.
+Agar siz muallifga moddiy rahmat aytmoqchi bo'lsangiz, buni [Yu.Money](https://yoomoney.ru/to/41001515922197) orqali donat qilishingiz mumkin.
+(Iltimos, donat izohlarda bu kitob uchun xayriya ekanligini ko'rsating).
