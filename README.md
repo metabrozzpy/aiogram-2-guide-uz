@@ -5,4 +5,4 @@ Pythonda Telegram botlarni yozish bo'yicha [@MasterGroosha](https://github.com/M
 2015 yildan 2019 yilgacha yaratilgan birinchi talqin [bu yerda](https://github.com/MasterGroosha/telegram-tutorial) mavjud (tez orada tarjima qilinadi).
 
 Botlar yasashda [aiogram](https://github.com/aiogram/aiogram) frameworkidan foydalaniladi,
-va kitob uchun generator [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) olindi.
+va kitob uchun generator sifatida [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) olindi.
