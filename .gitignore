@@ -1,7 +1,4 @@
-venv/
+env/
 .idea/
 .vscode/
 .env
-docker-compose.yml
-
-/code/04_fsm/config/bot.ini
