@@ -1,7 +1,8 @@
-# Пишем Telegram-ботов на Python (v2) 
+# Pythonda Telegram botlar yozamiz (v2) 
 
-Перед вами [вторая версия](https://mastergroosha.github.io/aiogram-2-guide/) моей книги по написанию ботов для Telegram на языке Python. 
-Первая версия, которая создавалась с 2015 по 2019 годы, доступна [здесь](https://github.com/MasterGroosha/telegram-tutorial).
+Pythonda Telegram botlarni yozish bo'yicha [@MasterGroosha](https://github.com/MasterGroosha/) kitobining [ikkinchi talqini](https://github.com/metabrozzpy/aiogram-2-guide-uz/).
 
-Для самих ботов используется фреймворк [aiogram](https://github.com/aiogram/aiogram), 
-а для книги взят генератор [mkdocs-material](https://squidfunk.github.io/mkdocs-material/).
+2015 yildan 2019 yilgacha yaratilgan birinchi talqin [bu yerda](https://github.com/MasterGroosha/telegram-tutorial) mavjud (tez orada tarjima qilinadi).
+
+Botlar yasashda [aiogram](https://github.com/aiogram/aiogram) frameworkidan foydalaniladi,
+va kitob uchun generator [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) olindi.
