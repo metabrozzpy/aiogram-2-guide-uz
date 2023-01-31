@@ -1,24 +1,20 @@
 ---
-title: Кнопки
-description: Кнопки
+title: Tugmalar
+description: Tugmalar
 ---
 
-# Кнопки
+# Tugmalar
 
-В этой главе мы познакомимся с такой замечательной фичей Telegram-ботов, как кнопки. Прежде всего, чтобы избежать 
-путаницы, определимся с названиями. То, что цепляется к низу экрана вашего устройства, будем называть **обычными** 
-кнопками, а то, что цепляется непосредственно к сообщениям, назовём **инлайн**-кнопками. Ещё раз картинкой:  
+Ushbu bobda biz Telegram botlarining tugmalar kabi ajoyib xususiyati bilan tanishamiz. Avvalo, chalkashmaslik uchun ularga nom beraylik. Qurilmangiz ekranining pastki qismiga yopishib olganlarni **oddiy** tugmalar, to‘g‘ridan-to‘g‘ri xabarlarga yopishib olganlarni esa **inline** tugmachalar deb nomlaymiz. Yana bir bor rasmga:  
 
 ![Два вида кнопок](images/buttons/l03_1.png)
 
-## Обычные кнопки {: id="reply-buttons" }
-### Кнопки как шаблоны {: id="reply-as-text" }
+## Oddiy tugmalar {: id="reply-buttons" }
+### Shablon sifatidagi tugmalar {: id="reply-as-text" }
 
-Этот вид кнопок появился вместе с Bot API в далёком 2015 году и представляет собой не что иное, как шаблоны сообщений 
-(за исключением нескольких особых случаев, но о них позже). Принцип простой: что написано на кнопке, то и будет отправлено 
-в текущий чат. Соответственно, чтобы обработать нажатие такой кнопки, бот должен распознавать входящие текстовые сообщения. 
+Ushbu turdagi tugma Bot APIga 2015 yilda paydo bo'lgan va oddiy matndan farqi yoq (bir nechta maxsus holatlar bundan mustasno, lekin ular haqida keyinroq). Принцип oddiy: tugmachada yozilgan matn chatga yuboriladi va bot bosilgan tugmadagi matn bilan ishlovchi handlerga yuboradi. Foydalanuvchi tugma o'rniga tugmadagi matnni yozib yuborishi ham bosilganiga teng! Shuning uchun "matn shablonlari" deyishgan ya'ni pastdagi tugmalar aslida bular oddiy tayyor matnlar to'plami.
 
-Напишем хэндлер, который будет при нажатии на команду `/start` отправлять сообщение с двумя кнопками:
+`/start` buyrug`i bosilganda ikkita tugma bilan xabar yuboradigan handler yozamiz:
 
 ```python
 # from aiogram import types
@@ -32,19 +28,14 @@ async def cmd_start(message: types.Message):
     await message.answer("Как подавать котлеты?", reply_markup=keyboard)
 ```
 
-Обратите внимание, что т.к. обычные кнопки суть шаблоны сообщений, то их можно создавать не только как объекты `KeyboardButton`, 
-но и как обычные строки.  
-Что ж, запустим бота и обалдеем от громадных кнопок:
+E'tibor bering, oddiy tugmalar matn shablonlari bo'lganligi sababli, ular nafaqat `KeyboardButton` obyektlari, balki oddiy stringlar sifatida ham yaratilishi mumkin.  
+
+Keling, botni ishga tushiramiz va otni kallasidek keladigan tugmalardan hayratda qolamiz:
 
 ![Очень большие обычные кнопки](images/buttons/l03_2.png)
 
-Как-то некрасиво. Во-первых, хочется сделать кнопки поменьше, а во-вторых, расположить их горизонтально.  
-Почему вообще они такие большие? Дело в том, что по умолчанию «кнопочная» клавиатура должна занимать на смартфонах столько 
-же места, сколько и обычная буквенная. Для уменьшения кнопок к объекту клавиатуры надо указать дополнительный 
-параметр `resize_keyboard=True`.  
-Но как заменить вертикальные кнопки на горизонтальные? С точки зрения Bot API, клавиатура — это [массив массивов](https://core.telegram.org/bots/api#replykeyboardmarkup) 
-кнопок, а если говорить проще, массив строк. Метод `add()` при каждом вызове создаёт новую строку (ряд) и принимает 
-произвольное число аргументов по количеству желаемых кнопок в строке. Перепишем наш код, чтобы было красиво:
+Qanaqadir juda xunuk. Birinchidan, men tugmachalarni kichikroq qilishni, ikkinchidan, ularni gorizontal tartibga keltirishni xohlayman. Nima uchun ular juda katta? Gap shundaki, aslida "tugma" smartfon klaviaturasidagi oddiy alifbo kabi ko'proq joy egallashi kerak. Tugmalarni kichraytirish uchun siz klaviatura obyektiga qo'shimcha parametr `resize_keyboard=True` belgilashingiz kerak.  
+Ammo vertikal tugmalarni gorizontallar bilan qanday almashtirish mumkin? Bot API nuqtai nazaridan klaviatura bu tugmalardan iborat [massivlar massivi](https://core.telegram.org/bots/api#replykeyboardmarkup) yoki oddiyroq aytganda, qatorlar massividir. `add()` usulini har bir chaqirganda yangi qator hosil qiladi. Keling, chiroyli ko'rinishi uchun kodimizni qayta yozamiz:
 
 ```python
 @dp.message_handler(commands="start")
@@ -56,16 +47,14 @@ async def cmd_start(message: types.Message):
 ```
 
 !!! info ""
-    Обратите внимание на конструкцию `*buttons`. Здесь вам не C++ и звёздочка используется для _распаковки списка_. 
-    Подробнее об операторах `*` и `**` можно прочитать 
-    [здесь](https://tproger.ru/translations/asterisks-in-python-what-they-are-and-how-to-use-them/).
+    `*buttons` konstruktsiyasiga e'tibor bering. Bu C++ emas bu yulduzchadan _ro'yxatni ochish_ uchun ishlatilinadi.  
+    `*` va `**` operatorlari haqida ko'proq ma`lumotni [bu yerda](https://tproger.ru/translations/asterisks-in-python-what-they-are-and-how-to-use-them/) o'qishingiz mumkin.
 
-Смотрим — действительно красиво:
+Qarang - bu haqiqatan ham chiroyli:
 
 ![Кнопки в один ряд](images/buttons/l03_3.png)
 
-Осталось научить бота реагировать на нажатие таких кнопок. Как уже было сказано выше, необходимо делать проверку 
-на полное совпадение текста. Сделаем это двумя способами: через специальный фильтр `Text` и обычной лямбдой:
+Botni bunday tugmalarni bosganda javob berishga o'rgatish qoldi. Yuqorida aytib o'tilganidek, matnning to'liq mos kelishini tekshirish kerak. Buni ikki usulda bajaramiz: maxsus `Text` filtri va oddiy lambda orqali:
 
 ```python
 # from aiogram.dispatcher.filters import Text
@@ -81,83 +70,83 @@ async def without_puree(message: types.Message):
 
 ![Реакция на нажатие кнопок](images/buttons/l03_4.png)
 
-Чтобы удалить кнопки, необходимо отправить новое сообщение со специальной «удаляющей» клавиатурой типа 
-`ReplyKeyboardRemove`. Например: `await message.reply("Отличный выбор!", reply_markup=types.ReplyKeyboardRemove())`
+Tugmalarni olib tashlash uchun siz `ReplyKeyboardRemove` kabi maxsus "o'chirish" "keyboard"i bilan yangi xabar yuborishingiz kerak. Masalan:  
+`await message.reply("Отличный выбор!", reply_markup=types.ReplyKeyboardRemove())`
 
 !!! info ""
-    У [объекта обычной клавиатуры](https://core.telegram.org/bots/api#replykeyboardmarkup) есть ещё две полезных опции: 
-    `one_time_keyboard` для скрытия кнопок после нажатия и `selective` для показа клавиатуры лишь некоторым участникам группы. 
-    Их использование остаётся для самостоятельного изучения.
+    [Oddiy klaviatura obyekti](https://core.telegram.org/bots/api#replykeyboardmarkup)da yana ikkita foydali parametr mavjud: tugmalarni bosgandan keyin yashirish uchun `one_time_keyboard` va `selective` klaviaturani guruhdagi ayrim a'zolariga ko'rsatish uchun. Ulardan foydalanish mustaqil o'rganish uchun qoldiriladi, o'zing ko'rib chiq кароче.
 
-    Помимо стандартных опций, описанных выше, aiogram немного расширяет функциональность клавиатур параметром `row_width`. 
-    При его использовании, фреймворк автоматически разобьёт массив кнопок на строки по N элементов в каждой, где N — 
-    значение `row_width`, например, `row_width=2`. Попробуйте!
+    Yuqorida tavsiflangan standart parametrlarga qo'shimcha ravishda, aiogram `row_width` parametri bilan klaviaturalarning funksionalligini biroz kengaytiradi. Undan foydalanilganda, aiogram avtomatik ravishda tugmalar massivini har biri N elementdan iborat qatorlarga ajratadi, bu erda N - `row_width` qiymati, masalan, `row_width=2`. Urunib ko'ring!
 
-### Специальные обычные кнопки {: id="reply-special" }
+### Maxsus tugmalar {: id="reply-special" }
+ 
+Telegramda oddiy tugmalarning uchta maxsus turi mavjud: biri manzilni yuborish, ikkinchisi telefon raqamini yuborish va oxirgisi so‘rov/viktorina yaratish uchun. Dastlabki ikkita tur uchun mantiqiy(bool) qiymatni ko'rsatish kifoya (True/False), so'rovlar va viktorinalar uchun esa maxsus turdagi `KeyboardButtonPollType`dan o'tishingiz va ixtiyoriy ravishda yaratiladigan obyekt(quiz/poll) turini belgilashingiz kerak.
 
-По состоянию на конец ужасного 2020 года в Telegram существует три специальных вида обычных кнопок, не являющихся шаблонами: 
-для отправки текущей геолокации, для отправки своего номера телефона и ярлык для создания опроса/викторины. Для первых двух 
-типов достаточно установить булевый флаг, а для опросов и викторин нужно передать специальный тип `KeyboardButtonPollType` 
-и, по желанию, указать тип создаваемого объекта.
-
-Впрочем, проще один раз увидеть код:
+Eng osoni, kodni bir marta ko'rish yaxshiroq:
 ```python
 @dp.message_handler(commands="special_buttons")
 async def cmd_special_buttons(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(types.KeyboardButton(text="Запросить геолокацию", request_location=True))
-    keyboard.add(types.KeyboardButton(text="Запросить контакт", request_contact=True))
-    keyboard.add(types.KeyboardButton(text="Создать викторину",
-                                      request_poll=types.KeyboardButtonPollType(type=types.PollType.QUIZ)))
-    await message.answer("Выберите действие:", reply_markup=keyboard)
+
+    keyboard.add(types.KeyboardButton(
+        text="Joylashuvni so'rash", request_location=True
+    ))
+    keyboard.add(types.KeyboardButton(
+        text="Kontaktni so'rash", request_contact=True
+    ))
+    keyboard.add(types.KeyboardButton(
+        text="Viktorina yaratish",
+        request_poll=types.KeyboardButtonPollType(type=types.PollType.QUIZ)
+    ))
+
+    await message.answer("Amalni tanlang:", reply_markup=keyboard)
 ```
 
-## Инлайн-кнопки {: id="inline-buttons" }
-### URL-кнопки и колбэки {: id="url-callback-buttons" }
+## Inlayn tugmalar {: id="inline-buttons" }
+### URL-tugmalar va callbacklar {: id="url-callback-buttons" }
 
-В отличие от обычных кнопок, инлайновые цепляются не к низу экрана, а к сообщению, с которым были отправлены. 
-В этой главе мы рассмотрим два типа таких кнопок: URL и Callback. Ещё один — Switch — будет рассмотрен 
-в главе про [инлайн-режим](inline_mode.md).
+Oddiy tugmalardan farqli o'laroq, inlayn tugmalar ekranning pastki qismiga emas, balki ular yuborilgan xabarga birikib keladi. Ushbu bobda biz bunday tugmalarning ikki turini ko'rib chiqamiz: URL va Callback. Yana biri - Switch - uni [inlayn rejim](inline_mode.md) haqidagi bobda muhokama qilamiz.
 
 !!! info ""
-    Login- и Pay-кнопки в книге рассматриваться не будут вообще. Если у кого-то есть желание помочь хотя бы 
-    с рабочим кодом для авторизации или оплаты, пожалуйста, создайте Pull Request на 
-    [GitHub](https://github.com/MasterGroosha/aiogram-2-guide). Спасибо!
+    Kitobda "Login" va "Pay" tugmalari umuman ko'rib chiqilmaydi. Agar kimdir hech bo'lmaganda avtorizatsiya yoki to'lov uchun ishlab turgan kod bilan yordam berishni xohlasa, iltimos, [GitHub](https://github.com/MasterGroosha/aiogram-2-guide)da Pull Request yarating. Rahmat!
 
-Самые простые инлайн-кнопки относятся к типу URL, т.е. «ссылка». Поддерживаются только протоколы HTTP(S) и tg://
+Eng oddiy inlayn tugmalar URL turiga mansubdir, ya'ni «havola». Va shuni unutmangki, faqat HTTP(S) va tg:// protokollari qo'llab-quvvatlanadi.
 
 ```python
 @dp.message_handler(commands="inline_url")
 async def cmd_inline_url(message: types.Message):
     buttons = [
         types.InlineKeyboardButton(text="GitHub", url="https://github.com"),
-        types.InlineKeyboardButton(text="Оф. канал Telegram", url="tg://resolve?domain=telegram")
+        types.InlineKeyboardButton("Telegram kanali", "tg://resolve?domain=telegram")
     ]
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     keyboard.add(*buttons)
-    await message.answer("Кнопки-ссылки", reply_markup=keyboard)
+
+    await message.answer("Havolalar", reply_markup=keyboard)
 ```
 
-А если хотите обе кнопки в ряд, то уберите `row_width=1` (тогда будет использоваться значение по умолчанию 3).
+Va agar siz ikkala tugmani ketma-ket joylashtirishni istasangiz, `row_width=1`ni olib tashlang (standart qiymat 3 ishlatilinadi).
 
-С URL-кнопками больше обсуждать, по сути, нечего, поэтому перейдём к гвоздю сегодняшней программы — Callback-кнопкам. 
-Это очень мощная штука, которую вы можете встретить практически везде. Кнопки-реакции у постов (лайки), меню у @BotFather 
-и т.д. Суть в чём: у колбэк-кнопок есть специальное значение (data), по которому ваше приложение опознаёт, что нажато и что надо сделать. 
-И выбор правильного data **очень важен**! Стоит также отметить, что, в отличие от обычных кнопок, нажатие на колбэк-кнопку 
-позволяет сделать практически что угодно, от заказа пиццы до перезагрузки сервера.
+URL tugmalari, aslida, muhokama qilish uchun boshqa hech narsa yo'q, shuning uchun bugungi dasturning diqqatga sazovor tomoniga o'tamiz - callback tugmalari. Bu juda kuchli narsa, uni deyarli hamma joyda ko'rishingiz mumkin. Xabarlar uchun reaksiya tugmalari (yoqtirishlar), @BotFather uchun menyular va boshqalar. Xulosa: callback tugmalari maxsus qiymatga (data) ega bo'lib, sizning ilovangiz nima bosilganligini va nima qilish kerakligini shundan bilib oladi.
+Va to'g'ri datani tanlash **juda muhim**! Shuni ham ta'kidlash joizki, oddiy tugmalardan farqli o'laroq, callback tugmachasini bosish sizga pitsa buyurtma qilishdan tortib, serverni qayta ishga tushirishgacha bo'lgan deyarli hamma narsani qilish imkonini beradi.
 
-Напишем хэндлер, который по команде `/random` будет отправлять сообщение с колбэк-кнопкой:
+`/random` buyrug'i yordamida callback tugmasi bilan xabar yuboradigan handler yozamiz:
 ```python
 @dp.message_handler(commands="random")
 async def cmd_random(message: types.Message):
     keyboard = types.InlineKeyboardMarkup()
-    keyboard.add(types.InlineKeyboardButton(text="Нажми меня", callback_data="random_value"))
-    await message.answer("Нажмите на кнопку, чтобы бот отправил число от 1 до 10", reply_markup=keyboard)
+    keyboard.add(types.InlineKeyboardButton(
+        text="Нажми меня", 
+        callback_data="random_value"
+    ))
+
+    await message.answer(
+        text="Нажмите на кнопку, чтобы бот отправил число от 1 до 10", 
+        reply_markup=keyboard
+    )
 ```
 
-Но как же обработать нажатие? Если раньше мы использовали `message_handler` для обработки входящих сообщений, то теперь 
-будем использовать `callback_query_handler` для обработки колбэков. Ориентироваться будем на «значение» кнопки, т.е. на 
-её data:
+Lekin bosilgan tugmani qanday aniqlash kerak? Agar ilgari yuborilgan xabarlarni qayta ishlash uchun `message_handler`dan foydalangan bo‘lsak, endi callbacklarni qayta ishlash uchun `callback_query_handler`dan foydalanamiz. Biz tugmachaning "qiymati"ga e'tibor qaratamiz, ya'ni. uning datasi:
 
 ```python
 @dp.callback_query_handler(text="random_value")
@@ -165,113 +154,109 @@ async def send_random_value(call: types.CallbackQuery):
     await call.message.answer(str(randint(1, 10)))
 ```
 
-!!! warning "Важно"
-    Несмотря на то, что параметр кнопки `callback_data`, а значение `data` лежит в одноимённом поле `data` 
-    объекта [CallbackQuery](https://core.telegram.org/bots/api#callbackquery), собственный фильтр aiogram называется `text`.
+!!! warning "Muhim"
+    [CallbackQuery](https://core.telegram.org/bots/api#callbackquery) obyektidagi ma'lumot `data` deb nomlangan maydonda saqlanishi va u `data` deb nomlanishiga qaramay, aiogramda uni `text` filtri ostida nomlashgan. Yuqoridagi kodni filtriga e'tibor bering!
  
 ![Реакция на нажатие колбэк-кнопки](images/buttons/l03_5.png)
 
-Ой, а что это за часики? Оказывается, сервер Telegram ждёт от нас подтверждения о доставке колбэка, иначе в течение 30 
-секунд будет показывать специальную иконку. Чтобы скрыть часики, нужно вызвать метод `answer()` у колбэка (или использовать 
-метод API `answer_callback_query()`). В общем случае, в метод `answer()` можно ничего не передавать, но можно вызвать 
-специальное окошко (всплывающее сверху или поверх экрана):
+Iy, bu soatcha nima? Ma’lum bo‘lishicha, Telegram serveri bizdan callbackni yetkazib berishni tasdiqlashimizni kutmoqda, aks holda u 30 soniya davomida maxsus belgini ko‘rsatadi. Soatchani yashirish uchun siz callbackda `answer()` metodini chaqirishingiz kerak (yoki `answer_callback_query()` API metodidan foydalanish). Umuman olganda, siz `answer()` metodiga qo'shimcha hech narsa o'tkazishingiz shar emas, lekin siz maxsus oynachani chaqirishingiz mumkin (ekranning tepasida yoki barcha oynalar ustidan alohida OK tugmasi mavjud oyna):
 
 ```python
 @dp.callback_query_handler(text="random_value")
 async def send_random_value(call: types.CallbackQuery):
     await call.message.answer(str(randint(1, 10)))
     await call.answer(text="Спасибо, что воспользовались ботом!", show_alert=True)
-    # или просто await call.answer()
+    # yoki shunchaki await call.answer()
 ```
 
 ![Всплывающее окно при нажатии на колбэк-кнопку](images/buttons/l03_6.png)
 
 
-!!! info "Обратите внимание"
-    В функции `send_random_value` мы вызывали метод `answer()` не у `message`, а у `call.message`. Это связано с тем, 
-    что колбэк-хэндлеры работают не с сообщениями (тип [Message](https://core.telegram.org/bots/api#message)), 
-    а с колбэками (тип [CallbackQuery](https://core.telegram.org/bots/api#callbackquery)), у которого другие поля, и 
-    само сообщение — всего лишь его часть. Учтите также, что `message` — это сообщение, к которому была прицеплена 
-    кнопка (т.е. отправитель такого сообщения — сам бот). Если хотите узнать, кто нажал на кнопку, смотрите 
-    поле `from` (в вашем коде это будет `call.from_user`, т.к. слово `from` зарезервировано в Python)
+!!! info "Eslatma"
+    `send_random_value` funksiyasida biz `answer()` metodini `message`da emas, balki `call.message`da chaqirdik. Buning sababi, callback-handlerlari xabarlar ([Message](https://core.telegram.org/bots/api#message)) bilan emas, balki boshqa maydonlarga ega bo'lgan callbacklar ([CallbackQuery](https://core.telegram.org/bots/api#callbackquery)) bilan ishlaydi va xabarning o'zi faqat uning bir qismi xolos. Shuni ham yodda tutingki, `message` - tugma biriktirilgan xabardir (ya'ni, bunday xabarni jo'natuvchi botning o'zi). Agar siz tugmani kim bosganini bilmoqchi bo'lsangiz, `from` maydoniga qarang (sizning kodingizda bu `call.from_user` bo'ladi, chunki `from` so'zi Pythonda kalit so'zlardan biri)
 
-!!! question "Когда вызывать `answer()`?"
-    В общем случае, главное — просто не забыть сообщить Telegram о получении колбэк-запроса, но я рекомендую ставить 
-    вызов `answer()` в самом конце, и вот почему: если вдруг в процессе обработки колбэка случится какая-то ошибка и 
-    бот нарвётся на необработанное исключение, пользователь увидит неубирающиеся полминуты часики и поймёт, что что-то 
-    не так. В противном случае, часики исчезнут, а пользователь останется в неведении, выполнился его запрос успешно или нет.
+!!! question "Qachon `answer()`ga murojaat qilish kerak?"
+    Umuman olganda, asosiysi Telegramga callbackni qabul qilinganlik to‘g‘risida xabar berishni unutmaslik kerak, lekin men `answer()`ni eng oxirida qo‘yishni tavsiya qilaman, buning sababi: agar callbackni qayta ishlash jarayonida (handlerda) xatolik yuz bersa, va bot exceptionga tushib qolsa, foydalanuvchi  yuqolmayotgan soatchani ko'radi va nimadir noto'g'ri ekanligini tushunadi. Darhol javob qaytarilsa, soatcha yuqoladi va foydalanuvchi uning so'rovi muvaffaqiyatli bo'ldimi yoki yo'qmi, qorong'ulikda qoladi.
 
 
-Перейдём к примеру посложнее. Пусть пользователю предлагается сообщение с числом 0, а внизу три кнопки: +1, -1 и Подтвердить. 
-Первыми двумя он может редактировать число, а последняя удаляет всю клавиатуру, фиксируя изменения. Хранить значения будем 
-в памяти в словаре (про конечные автоматы поговорим как-нибудь _в другой раз_).
+Keling, qiyinroq misolga o'tamiz. Foydalanuvchiga 0 raqami bilan message yuborilsin va pastki qismida uchta inlayn tugma biriktirilgan: +1, -1 va Tasdiqlash. Birinchi ikkitasi bilan u raqamni tahrirlashi mumkin, oxirgisi esa o'zgarishlarni tasdiqlab, inlayn klaviaturani o'chiradi. Qiymatni esa lug'at(dict) xotirasida saqlaymiz (FSMlar haqida _boshqa safar_ gaplashamiz).
 
 ```python
-# Здесь хранятся пользовательские данные.
-# Т.к. это словарь в памяти, то при перезапуске он очистится
+# Bu yerda foydalanuvchi ma'lumotlari saqlanadi.
+# dictdagi xotira, u qayta ishga tushirilganda tozalanadi
 user_data = {}
 
 def get_keyboard():
-    # Генерация клавиатуры.
+    # Klaviatura yaratish.
     buttons = [
         types.InlineKeyboardButton(text="-1", callback_data="num_decr"),
         types.InlineKeyboardButton(text="+1", callback_data="num_incr"),
-        types.InlineKeyboardButton(text="Подтвердить", callback_data="num_finish")
+        types.InlineKeyboardButton("Подтвердить", callback_data="num_finish")
     ]
-    # Благодаря row_width=2, в первом ряду будет две кнопки, а оставшаяся одна
-    # уйдёт на следующую строку
+    # row_width=2 tufayli birinchi qatorda ikkita tugma bo'ladi, 
+    # qolgani esa keyingi qatorga o'tadi.
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.add(*buttons)
     return keyboard
 
+
 async def update_num_text(message: types.Message, new_value: int):
-    # Общая функция для обновления текста с отправкой той же клавиатуры
-    await message.edit_text(f"Укажите число: {new_value}", reply_markup=get_keyboard())
+    # Xabarni yangi qiymat bilan o'zgartiramiz
+    await message.edit_text(
+        text=f"Укажите число: {new_value}", 
+        reply_markup=get_keyboard()
+    )
+
 
 @dp.message_handler(commands="numbers")
 async def cmd_numbers(message: types.Message):
     user_data[message.from_user.id] = 0
     await message.answer("Укажите число: 0", reply_markup=get_keyboard())
 
+
 @dp.callback_query_handler(Text(startswith="num_"))
 async def callbacks_num(call: types.CallbackQuery):
-    # Получаем текущее значение для пользователя, либо считаем его равным 0
+    # Foydalanuvchining joriy qiymatni olamiz
+    # uni 0 ga teng deb hisoblaymiz
     user_value = user_data.get(call.from_user.id, 0)
-    # Парсим строку и извлекаем действие, например `num_incr` -> `incr`
+
+    # stringni bo'laklab qaysi amal bajarish kerakligini ko'satamiz,
+    # masalan, `num_incr` -> `incr`
     action = call.data.split("_")[1]
+
     if action == "incr":
-        user_data[call.from_user.id] = user_value+1
-        await update_num_text(call.message, user_value+1)
+        user_data[call.from_user.id] = user_value + 1
+        await update_num_text(call.message, user_value + 1)
+
     elif action == "decr":
-        user_data[call.from_user.id] = user_value-1
-        await update_num_text(call.message, user_value-1)
+        user_data[call.from_user.id] = user_value - 1
+        await update_num_text(call.message, user_value - 1)
+
     elif action == "finish":
-        # Если бы мы не меняли сообщение, то можно было бы просто удалить клавиатуру
-        # вызовом await call.message.delete_reply_markup().
-        # Но т.к. мы редактируем сообщение и не отправляем новую клавиатуру, 
-        # то она будет удалена и так.
+        # Agar biz xabarni o'zgartirmasak, 
+        # await call.message.delete_reply_markup()
+        # chaqirib keyboardni o'chirib tashlashimiz mumkin edi. 
+        # Yaxshisi xabarni tahrir qilamiz va yangi keyboard yubormaymiz, 
+        # standart reply_markup=None bo'lganligi uchun keyboard o'chiriladi.
         await call.message.edit_text(f"Итого: {user_value}")
-    # Не забываем отчитаться о получении колбэка
+
+    # Callbackni qabul qilish haqida xabar berishni unutmaymiz
     await call.answer()
 ```
 
-И, казалось бы, всё работает: 
+Va hamma narsa ishlayotganga o'xshaydi: 
 
 ![Всё работает?](images/buttons/l03_7.png)
 
-Но теперь представим, что ушлый пользователь сделал следующее: вызвал команду `/numbers` (значение 0), увеличил значение 
-до 1, снова вызвал `/numbers` (значение сбросилось до 0) и отредактировал нажал кнопку "+1" на первом сообщении. 
-Что произойдёт? Бот по-честному отправит запрос на редактирование текста со значением 1, но т.к. на том сообщении 
-уже стоит цифра 1, то Bot API вернёт ошибку, что старый и новый тексты совпадают, а бот словит исключение: 
-`aiogram.utils.exceptions.MessageNotModified: Message is not modified: specified new message content and reply markup 
-are exactly the same as a current content and reply markup of the message`
+Ammo keling qaysidir aqlli foydalanuvchi `/numbers` buyrug'ini chaqirdi (qiymat 0ga teng) va qiymatni "+1" ga oshirdi (qiymat 1), va yana bir marta `/numbers`ni chaqirdi (endi qiymat yana 0 ga tenglandi). Endi bu "полуфабрикат" birinchi yuborgan buyrug'iga kelgan xabardagi "+1" tugmasiga yana bosdi deb tasavvur qilaylik.
+
+Xo'sh nima bo'ladi? Bot halollik bilan matndagi qiymatni "1"ga tahrir qilish uchun so'rov yuboradi, lekin bu matn allaqachon 1 qiymatiga ega, Bot API eski matn, yangi matn bilan bir xil ekanligi to'g'risidagi xatoni qaytaradi va bot exceptionga uchraydi:  
+
+`aiogram.utils.exceptions.MessageNotModified: Message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message`
 
 ![Всё работает?](images/buttons/l03_8.png)
 
-С этой ошибкой вы, скорее всего, будете поначалу часто сталкиваться, пытаясь редактировать сообщения. Но, в действительности, 
-решается проблема очень просто: мы проигнорируем исключение `MessageNotModified`. Из [первой главы](quickstart.md#_3) вы 
-уже знаете о такой прекрасной штуке, как `errors_handler`, но в этот раз мы поступим чуть иначе и перепишем 
-функцию `update_num_text()` следующим образом:
+Avvaliga xabarlarni tahrir qilishga urinayotganda, bu xatoga tez-tez duch kelishingiz mumkin. Ammo, aslida, muammo juda oddiy hal qilinadi: biz shunchaki `MessageNotModified` exceptionini e'tiborsiz qoldirishimiz kerak. [Birinchi bobdan](quickstart.md#_3) siz `errors_handler` kabi ajoyib narsa haqida allaqachon bilgansiz, lekin bu safar biz bunga biroz boshqacha yondashamiz va `update_num_text()` funksiyasini quyidagicha qayta yozamiz:
 
 ```python
 # from aiogram.utils.exceptions import MessageNotModified
@@ -279,29 +264,32 @@ are exactly the same as a current content and reply markup of the message`
 
 async def update_num_text(message: types.Message, new_value: int):
     with suppress(MessageNotModified):
-        await message.edit_text(f"Укажите число: {new_value}", reply_markup=get_keyboard())
+        await message.edit_text(
+            text=f"Укажите число: {new_value}",
+            reply_markup=get_keyboard()
+        )
 ```
 
-Если теперь вы попробуете повторить пример выше, то указанное исключение в этом блоке кода бот просто-напросто проигнорирует.
+Agar siz hozir yuqoridagi misolni takrorlashga harakat qilsangiz, bot ushbu kod blokdagi ko'rsatilgan Excepionni ignore qiladi.
 
-### Фабрика колбэков {: id="callback-factory" }
+### Callbacklar fabrikasi {: id="callback-factory" }
 
-В aiogram существует т.н. фабрика колбэков. Вы создаёте объект `CallbackData`, указываете ему префикс и произвольное 
-количество доп. аргументов, которые в дальнейшем указываете при создании колбэка для кнопки.  
-Например, рассмотрим следующий объект:
+Aiogramda callback fabrikasi (callback-factory) deb ataladigan shunday narsa bor. Siz `CallbackData` obyektini yaratasiz, unga prefiks va ixtiyoriy miqdordagi argumentlarni keyinchalik ko'rsatish uchun kiritasiz.
+
+Masalan, quyidagi obyektni ko'rib chiqing:
 ```python
 # from aiogram.utils.callback_data import CallbackData
-cb= CallbackData("post", "id", "action")
+cb = CallbackData("post", "id", "action")
 ```
-Тогда при создании кнопки вам надо указать её параметры так:
+Tugma yaratishda siz uning parametrlarini quyidagicha belgilashingiz kerak:
 ```python
 button =  types.InlineKeyboardButton(
-    text="Лайкнуть", 
+    text="Layk bosish", 
     callback_data=cb.new(id=5, action="like")
 )
 ```
 
-В примере выше в кнопку запишется `callback_data`, равный `post:5:like`, а хэндлер на префикс `post` будет выглядеть так:
+Yuqoridagi misolda tugmaga `post:5:like`ga teng `callback_data` yoziladi va `post` prefiksi uchun handler quyidagicha ko'rinadi:
 ```python
 @dp.callback_query_handler(cb.filter())
 async def callbacks(call: types.CallbackQuery, callback_data: dict):
@@ -309,30 +297,45 @@ async def callbacks(call: types.CallbackQuery, callback_data: dict):
     action = callback_data["action"]
 ```
 
-В предыдущем примере с числами мы грамотно выбрали `callback_data`, поэтому смогли легко запихнуть все обработчики 
-в один хэндлер. Но можно логически разнести обработку инкремента и декремента от обработки нажатия на кнопку "Подтвердить". 
-Для этого в фильтре фабрики можно указать желаемые значения какого-либо параметра. Давайте перепишем наш пример 
-с использоваанием фабрики:
+Raqamlar bilan oldingi misolda biz `callback_data`ni qiymatini ajratib olish oson qilib tanlagan edik, hamda vazifamiz bor-yog'i 3ta ishdan iborat ekanligini inobatga olib `callback_query_handler`ni bitta funksiya ichida "реализовать" qildik. Ammo biz vazifani "+1" va "-1" bosilganda alohida handler yoki bo'lmasam "Tasdiqlash" tugmasini bosilganda alohida handlerga mantiqiy bo'lib berishimiz mumkin.
+
+Buning uchun siz fabrika filtrida yasagan obyektingiz argumentlarining biriga tugmaga berilgan qiymatlarni mos ravishda ko'rsatishingiz kerak.  
+
+Keling, misolimizni qayta yozamiz:
 
 ```python
-# fabnum - префикс, action - название аргумента, которым будем передавать значение
+# fabnum - prefiks, action - biz qiymat kiritadigan argument nomi
 callback_numbers = CallbackData("fabnum", "action")
 
 
 def get_keyboard_fab():
     buttons = [
-        types.InlineKeyboardButton(text="-1", callback_data=callback_numbers.new(action="decr")),
-        types.InlineKeyboardButton(text="+1", callback_data=callback_numbers.new(action="incr")),
-        types.InlineKeyboardButton(text="Подтвердить", callback_data=callback_numbers.new(action="finish"))
+        types.InlineKeyboardButton(
+            text="-1", 
+            callback_data=callback_numbers.new(action="decr")
+        ),
+        types.InlineKeyboardButton(
+            text="+1", 
+            callback_data=callback_numbers.new(action="incr")
+        ),
+        types.InlineKeyboardButton(
+            text="Подтвердить", 
+            callback_data=callback_numbers.new(action="finish")
+        )
     ]
+
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.add(*buttons)
+
     return keyboard
 
 
 async def update_num_text_fab(message: types.Message, new_value: int):
     with suppress(MessageNotModified):
-        await message.edit_text(f"Укажите число: {new_value}", reply_markup=get_keyboard_fab())
+        await message.edit_text(
+            text=f"Укажите число: {new_value}", 
+            reply_markup=get_keyboard_fab()
+        )
 
 
 @dp.message_handler(commands="numbers_fab")
@@ -345,12 +348,15 @@ async def cmd_numbers(message: types.Message):
 async def callbacks_num_change_fab(call: types.CallbackQuery, callback_data: dict):
     user_value = user_data.get(call.from_user.id, 0)
     action = callback_data["action"]
+
     if action == "incr":
         user_data[call.from_user.id] = user_value + 1
         await update_num_text_fab(call.message, user_value + 1)
+
     elif action == "decr":
         user_data[call.from_user.id] = user_value - 1
         await update_num_text_fab(call.message, user_value - 1)
+
     await call.answer()
 
 
@@ -361,4 +367,4 @@ async def callbacks_num_finish_fab(call: types.CallbackQuery):
     await call.answer()
 ```
 
-На этом глава про кнопки окончена, но про некоторые других их виды мы поговорим в следующих главах.
+Shunday qilib tugmalar haqidagi bob tugadi, ammo biz keyingi boblarda ularning boshqa turlari haqida gaplashamiz.
