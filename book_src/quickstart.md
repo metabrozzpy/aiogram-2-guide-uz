@@ -7,8 +7,7 @@ description: Aiogram bilan tanishuv
 
 ## O'rnatish {: id="installation" }
 
-Birinchi bo'lib bot uchun "папка" yaratamiz, u erda virtual muhit (venv) ochib, aktivlashtiramiz va
-[aiogram](https://github.com/aiogram/aiogram) kutubxonasini o'rnatamiz.
+Birinchi bo'lib bot uchun "папка" yaratamiz, va u erda virtual muhit (venv) ochib, aktivlashtiramiz va [aiogram](https://github.com/aiogram/aiogram) kutubxonasini o'rnatamiz.
 Python 3.7 versiyasi o'rnatilganligini tekshirib ko'ramiz (agar sizda 3.8 yoki undan yuqori versiya o'rnatilganligini bilsangiz, bu qismni o'tkazib yuborishingiz mumkin):
 
 ```plain
@@ -20,24 +19,28 @@ Type "help", "copyright", "credits" or "license" for more information.
 [groosha@main lesson_01]$
 ```
 
-Endi `requirements.txt` faylini yaratamiz, unda biz foydalanayotgan aiogram versiyasini kiritamiz.
+Endi `requirements.txt` faylini yaratib, foydalanayotgan aiogram versiyasini kiritamiz.
 !!! important "Aiogram versiyalari haqida"
-    Bu bobda aiogram versiyasi **2.9.2** qo‘llaniladi, lekin boshlashdan oldin kutubxonaning [relizlar kanalini](https://t.me/aiogram_live) ko‘rib chiqishingizni va yangiroq versiyasini tekshirishingizni tavsiya qilaman. 2 raqami bilan boshlanadigan har qanday relizni ishlatishingiz mumkin, chunki aiogram 3.0 kelajakda sezilarli o'zgarishlar va oldingi versiyalarga mos kelmaydigan darajada chiqarilishi kutilmoqda.
+    Bu bobda aiogram **2.9.2** versiyasi qo‘llaniladi, lekin boshlashdan oldin kutubxonaning [relizlar kanalini](https://t.me/aiogram_live) ko‘rib chiqishingizni va yangiroq versiyasini tekshirishingizni tavsiya qilaman. 2 raqami bilan boshlanadigan har qanday relizni ishlatishingiz mumkin, chunki aiogram 3.0 kelajakda sezilarli o'zgarishlar bilan va 2.Xga mos kelmaydigan darajada chiqarilishi kutilmoqda.
 
 ```plain
 [groosha@main lesson_01]$ python3.7 -m venv venv
 [groosha@main lesson_01]$ echo "aiogram==2.9.2" > requirements.txt
 [groosha@main lesson_01]$ source venv/bin/activate
 (venv) [groosha@main lesson_01]$ pip install -r requirements.txt
-# ...bu yerda o'rnatish haqida bir necha qatorlar...
+# ...bu yerda installation haqida bir necha qatorlar...
 Successfully installed Babel-2.8.0 aiogram-2.9.2 aiohttp-3.6.2 async-timeout-3.0.1 attrs-19.3.0 certifi-2020.6.20 chardet-3.0.4 idna-2.10 multidict-4.7.6 pytz-2020.1 typing-extensions-3.7.4.2 yarl-1.5.1
 WARNING: You are using pip version 19.2.3, however version 20.2.1 is available.
 You should consider upgrading via the 'pip install --upgrade pip' command.
 (venv) [groosha@main lesson_01]$
 ```
+Virtual muhitni aktivlashtirish:  
+`source venv/bin/activate` - Linux Terminalda  
+`venv\Scripts\activate` - Windows CMDda
 
-Terminaldagi "venv" prefiksiga e'tibor bering. Bu bizning "venv" nomli virtual muhitda ekanligimizdan dalolat beradi.
-Keling, venv ichida "python" buyrug'ini chaqiramiz:
+
+Terminaldagi `venv` prefiksiga e'tibor bering. Bu bizning `venv` nomli virtual muhitida ekanligimizdan dalolat beradi.
+Keling, venv ichida "python" buyrug'ini chaqiramiz (venv ichidagi python versiyasi ham global versiya bilan bir xil ekanligini ko'ramiz):
 
 ```plain
 (venv) [groosha@main lesson_01]$ python
@@ -49,7 +52,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 [groosha@main lesson_01]$
 ```
 
-Oxirgi "deactivate" buyrug'i bilan biz venvni bizga xalaqit bermasligi uchun qoldirdik.
+Oxirgi `deactivate` buyrug'i bilan biz virtual muhitimizda chiqdik.
 
 ## Birinchi bot {: id="hello-world" }
 
@@ -79,30 +82,27 @@ if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
 ```
 
-Shuni ta'kidlash kerakki, aiogram asinxron kutubxonadir, shuning uchun sizning funksiyalaringiz ham asinxron bo'lishi kerak,
-va API metodlariga qo'ng'iroq (so'rov, chaqiruv) qilishdan oldin siz **await** kalit so'zini qo'yishingiz kerak, chunki bu qo'ng'iroqlar [korutinalar](https://docs.python.org/3/library/asyncio-task.html#coroutines) qaytaradi.
+Shuni ta'kidlash kerakki, aiogram asinxron kutubxonadir, shuning uchun sizning funksiyalaringiz ham asinxron bo'lishi kerak, va API metodlariga qo'ng'iroq qilish (so'rov, chaqiruv)dan oldin siz **await** kalit so'zini qo'yishingiz kerak, chunki bu "qo'ng'iroq"lar [korutinalar](https://docs.python.org/3/library/asyncio-task.html#coroutines) qaytaradi.
 
 !!! info "Pythonda asinxron dasturlash"
     Rasmiy "документация"larni e'tiborsiz qoldirmang!  
     [Python web-saytida](https://docs.python.org/3/library/asyncio-task.html) asyncio uchun qo'llanma mavjud.
 
-Agar siz pyTelegramBotAPI kabi kutubxona bilan ishlagan bo'lsangiz, unda handler kontseptsiyasi (event handlers) sizga darhol tushunarli bo'ladi, yagona farq shundaki, aiogramda handlerlar dispetcher tomonidan boshqariladi.
-Dispetcher handlerlar funksiyalarini ro'yxatdan o'tkazadi va ularni updatega qarab filtrlar orqali tartiblaydi mos kelmaydiganlarini cheklab qo'yadi.
+Agar siz pyTelegramBotAPI kabi kutubxona bilan ishlagan bo'lsangiz, unda handler kontseptsiyasi sizga tanish, yagona farq shundaki, aiogramda handlerlar dispetcher tomonidan boshqariladi.  
+Dispetcher handlerlar funksiyalarini ro'yxatdan o'tkazadi va ularni updatega qarab filtrlar orqali tartiblaydi mos kelmaydiganlarini ro'yxatdan olib tashlaydi. Qisqasi Telegramdan yangilanish (update) kelgach, qaysi handlerga borishi kerakligini tanlaydi.  
+Filtrga misol: `"chat_id X va rasm caption uzunligi Y bo'lgan xabarlarni qayta ishlash"`.  
 
-Telegramdan yangilanish (telegram updates) olgach, dispetcher hamma filtrlar uchun mos bo'lgan kerakli handler funksiyasini tanlaydi. Masalan, Filtrga misol:  
-`"Chat IDsi X va Chatdagi rasmlar caption uzunligi Y bo'lgan xabarlarni qayta ishlash"`.  
-Agar ikkita funksiya bir xil mantiqiy filtrlarga ega bo'lsa, avval ro'yxatdan o'tgan funksiya chaqiriladi ya'ni ketma-ketlikda birinchi turgan handler chaqiriladi.
+Agar ikkita handler, bir xil mantiqiy filtrlarga ega bo'lsa, ro'yxatdan birinchi o'tgani chaqiriladi.
 
-Funksiyani xabar ishlovchisi (handler) sifatida ro'yxatdan o'tkazish uchun siz ikkita narsadan birini bajarishingiz kerak:
+Funksiyani handler sifatida ro'yxatdan o'tkazish uchun, ikki xil usul mavjud:
 
-1. Yuqoridagi misolda bo'lgani kabi, unga [decorator](https://devpractice.ru/python-lesson-19-decorators/) biriktirish.  
-   Har xil turdagi decoratorlar bilan keyinroq tanishamiz.
+1. Yuqoridagi misolda bo'lgani kabi, unga [decorator](https://devpractice.ru/python-lesson-19-decorators/) biriktirish.
 2. To'g'ridan-to'g'ri dispetcherda ro'yxatdan o'tkazish.
 
-Quyidagi kodni ko'rib chiqamiz:
+Quyidagi kodni ko'ring:
 
 ```python
-# /test1 buyrug'i uchun handler
+# /test1 buyrug'i uchun decorator biriktirilgan handler
 @dp.message_handler(commands="test1")
 async def cmd_test1(message: types.Message):
     await message.reply("Test 1")
@@ -115,8 +115,7 @@ async def cmd_test2(message: types.Message):
 Keling, ular bilan botni ishga tushiramiz:  
 ![/test2 buyrug'i ishlamaydi](images/quickstart/l01_1.jpg)
 
-`cmd_test2` funksiyasi ishlamaydi, chunki dispetcher bu haqda bilmaydi.  
-Keling, ushbu xatoni tuzatamiz va funksiyani ro'yxatdan o'tkazamiz:
+`/test2` buyrug'i uchun javobgar handler `cmd_test2` funksiyasi ishlamaydi, chunki dispetcher bu haqda bilmaydi. Keling, ushbu xatoni tuzatamiz va funksiyani ro'yxatdan o'tkazamiz:
 
 ```python
 # /test2 buyrug'i uchun handler
@@ -130,10 +129,12 @@ dp.register_message_handler(cmd_test2, commands="test2")
 Botni qayta ishga turshuramiz:
 ![Ikkala buyruq ham ishlaydi](images/quickstart/l01_2.jpg)
 
-## Xatolarni boshqarish {: id="error-handling" }
+## Istisnolar bilan ishlash {: id="error-handling" }
 
-Botning ishlashi davomida kod bilan emas, balki tashqi hodisalar bilan bog'liq bo'lgan turli xil xatolarning paydo bo'lishi muqarrar. Eng oddiy misol: botni bloklagan foydalanuvchiga xabar yuborishga urinish. Har bir metodni `try..except`ga tiqmaslik uchun aiogramda Bot API bilan bog'liq istisno(exception)lar uchun maxsus handler mavjud.  
-Quyidagi kod misolini ko'rib chiqing, u foydalanuvchiga javob berishdan oldin biroz uxlaydi:
+Exception = Istisno
+
+Botning ishlashi davomida kod bilan emas, balki tashqi hodisalar bilan bog'liq bo'lgan turli xil xatolarning paydo bo'lishi muqarrar. Eng oddiy misol: botni bloklagan foydalanuvchiga xabar yuborishga urinish. Har bir metodni `try..except`ga tiqmaslik uchun aiogramda Bot API bilan bog'liq exceptionlar uchun maxsus handler mavjud.  
+Quyidagi kodni ko'rib chiqing, u foydalanuvchiga javob berishdan oldin biroz uxlaydi:
 
 ```python
 @dp.message_handler(commands="block")
@@ -142,7 +143,7 @@ async def cmd_block(message: types.Message):
     await message.reply("Siz bloklandingiz.")
 ```
 
-Ushbu 10 soniya davomida foydalanuvchi botni o'z tomonidan bloklash uchun vaqt topishi mumkin va `reply` metodini chaqirishga urinish `BotBlocked` exceptioniga olib keladi. Keling, ushbu exception uchun maxsus handler yozamiz:
+Ushbu 10 soniya davomida foydalanuvchi botni bloklash uchun vaqt topishi mumkin va `reply` metodi chaqirilganida `BotBlocked` exceptioniga olib keladi. Keling, ushbu exception uchun maxsus handler yozamiz:
 
 ```python
 from aiogram.utils.exceptions import BotBlocked
@@ -150,25 +151,26 @@ from aiogram.utils.exceptions import BotBlocked
 @dp.errors_handler(exception=BotBlocked)
 async def error_bot_blocked(update: types.Update, exception: BotBlocked):
     # Update: Telegramdan yangilanish obyekti. Exception: istisno obyekti
-    # Bu erda siz qandaydir tarzda blokni boshqarishingiz mumkin, 
-    # masalan, foydalanuvchini ma'lumotlar bazasidan o'chirishingiz mumkin
+
+    # Bu erda siz blokni boshqarishingiz mumkin,
+    # masalan, foydalanuvchini bazadan o'chirish...
     print(f"Foydalanuvchi blokladi!\nXabar: {update}\nXatolik: {exception}")
 
-    # Bunday ishlov beruvchi har doim True qaytarishi kerak,
-    # agar qo'shimcha ishlov berish kerak bo'lmasa.
+    # Bunday handler har doim True qaytarishi kerak,
+    # agar qo'shimcha nimadir qilish kerak bo'lmasa.
     return True
 ```
 
-Xuddi shu kabi handler boshqa istisnolar uchun yoziladi. Shunday qilib, agar turli xil handlerlarda bir xil kutilmagan vaziyat yuzaga kelishi mumkin bo'lsa ya'ni exception, u holda uni alohida xato bilan ishlovchi handlerda hal qilish mumkin. Kod kamroq bo'ladi, o'qilishi osonlashadi.
+Bu handler boshqa handlerlarda yuzaga keladigan `BotBlocked` exceptionni bilan ishlaydi, natijada kod kamayadi, o'qilishi osonlashadi.
 
 !!! warning "Muhim"
-    `errors_handler`ning bir xususiyati borki, uni foydalanishni xohlamay qolishingiz mumkin. Gap shundaki, exception uchun yozgan handleringiz ishga tushib va tugallangandan so'ng, boshqaruv asosiy xato yuzaga kelgan handler funksiyasiga qaytmaydi. Oddiy qilib aytganda, agar, masalan, 100 ta siklning 57-iteratsiyasi `errors_handler`ni ishga tushirishga olib kelgan bo'lsa, qolgan iteratsiyalar va funksiyadagi kodning qolgan qismi bajarilmaydi. Bunday holda, `try..except` ishlatishdan boshqa hech narsa qolmaydi.
+    Ammo xursandchiligimiz uzoqqa chozilmaydi, chunki `errors_handler`ning bir xususiyati borki, uni hamma Exceptionlarda ham foydalanish to'g'ri ish emas. Gap shundaki, exception uchun yozgan handleringiz ishga tushib va tugallangandan so'ng, boshqaruv asosiy xato yuzaga kelgan handlerga qaytmaydi. Oddiy qilib aytganda, agar, masalan, 100 ta siklning 57-iteratsiyasida `errors_handler`ni chaqirishiga to'g'ri kelsa (ya'ni exceptiion kelib chiqsa), qolgan iteratsiyalar va funksiyadagi kodning qolgan qismi bajarilmaydi. Bunday holatda, `try..except` ishlatishdan boshqa hech narsa qolmaydi.
 
 ## Sintaktik shakar {: id="sugar" }
 
-Kodni yanada toza yozilishi va o'qilishi uchun aiogram standart Telegram obyektlarining imkoniyatlarini kengaytiradi.
-Masalan, `bot.send_message(...)` o'rniga `message.answer(...)` yoki `message.reply(...)` yozishingiz mumkin. Oxirgi ikki holatda `chat_id`ni ko'rsatish shart emas, u `updade`dagi xabardan o'zi oladi. `answer` va `reply` o'rtasidagi farq oddiy:  
-Birinchi metod shunchaki chatga xabar yuboradi, ikkinchisi "xabar"ga "javob" beradi:
+Kodni yanada toza yozilishi va o'qilishi uchun aiogram standart Telegram metodlarining imkoniyatlarini kengaytirgan.
+Masalan, `bot.send_message(...)` o'rniga `message.answer(...)` yoki `message.reply(...)` yozishingiz mumkin. Oxirgi ikki holatda `chat_id`ni ko'rsatish shart emas, u `updade`dan o'zi oladi. `answer` va `reply` o'rtasidagi farq oddiy:  
+Birinchi metod shunchaki chatga xabar yuboradi, ikkinchisi xabarga javob qaytaradi:
 
 ```python
 @dp.message_handler(commands="answer")
@@ -185,7 +187,7 @@ async def cmd_reply(message: types.Message):
 
 ![Разница между message.answer() и message.reply()](images/quickstart/l01_3.jpg)
 
-Bundan tashqari, ko'pgina xabar turlari uchun `javob_{turi}` kabi yordamchi metodlar mavjud, ya'ni `.answer_photo(...)` yoki `.reply_video(...)` masalan:
+Bundan tashqari, ko'pgina xabar turlari uchun `answer_{type}` yoki `reply_{type}` kabi yordamchi metodlar mavjud, ya'ni `.answer_photo(...)` yoki `.reply_video(...)` masalan:
 
 ```python
 @dp.message_handler(commands="dice")
@@ -194,9 +196,10 @@ async def cmd_dice(message: types.Message):
 ```
 
 !!! info "'message: types.Message' nimani anglatadi ?" 
-    Python - bu [kuchli, ammo dinamik turlanish](https://habr.com/ru/post/161205/)ga ega bo'lgan interpretor til, shuning uchun C++ yoki Javadagi kabi avvaldan ma'lum bir o'zgaruvchiga uni turini belgilab qo'yish mavjud emas. Biroq, 3.5-versiyadan boshlab, pythondagi variablelar turlariga ["hint(подсказка)"](https://docs.python.org/3/library/typing.html)lar berishni qo'llab-quvvatlashni boshladi, buning natijasida PyCharm kabi turli "checker" va IDElar variablelar turlarini tahlil qiladi va dasturchiga biror narsa noto'g'ri bo'lsa, xabar beradi. Bunday holda, `types.Message` hint(ko'rsatmasi) PyCharm’ga `message` o‘zgaruvchisi aiogram kutubxonasining `types` modulida aniqlanganidek `Message` turida ekanligini bildiradi (kod boshida importga qarang). Bu IDEga atributlar va funksiyalarni tezda taklif qilish imkonini beradi.
+    Python - [kuchli ammo dinamik turlanish](https://habr.com/ru/post/161205/)ga ega bo'lgan interpretor til, shuning uchun C++ yoki Javadagi kabi avvaldan ma'lum bir o'zgaruvchiga uni turini belgilab qo'yish mavjud emas. Biroq, 3.5-versiyadan boshlab, pythondagi variablelar turlariga ["hint(подсказка)"](https://docs.python.org/3/library/typing.html)lar berishni qo'llab-quvvatlashni boshladi, buning natijasida PyCharm kabi turli "checker" va IDElar variablelar turlarini tahlil qiladi va dasturchiga biror narsa noto'g'ri bo'lsa, xabar beradi.  
+    Bizning holatda, `types.Message` hint(ko'rsatmasi) PyCharm’ga `message` o‘zgaruvchisi aiogram kutubxonasining `types` modulida aniqlanganidek `Message` turida ekanligini bildiradi (kod boshida importga qarang). Bu IDEga atributlar va funksiyalarni tezda taklif qilish imkonini beradi.
 
-`/dice` buyrug'ini chaqirganda, bot o'sha chatga dice(🎲) yuboradi. Albatta, agar siz uni boshqa chatga yuborishingiz kerak bo‘lsa, eski uslubda `await bot.send_dice(...)`ga murojaat qilishingiz kerak bo‘ladi. Lekin `bot` obyekti (Bot classining ekzemplyari) ma'lum bir funksiyangiz bor modulingizda mavjud bo'lmasligi mumkin, ya'ni botingizni shabloniga asoslansak, `bot` obyekti ishga tushuruvchi fayldagina bo'ladi. Yaxshiyamki, bot obyekti barcha turdagi updatelarda mavjud: Message, CallbackQuery, InlineQuery va boshqalarda. Aytaylik, siz `/dice` buyrug'i yordamida 🎲ni suhbatlashiyotgan chatga emas, balki IDsi -100123456789 bo'lgan kanalga yubormoqchisiz. Oldingi funksiyani qayta yozamiz:
+`/dice` buyrug'ini chaqirganda, bot o'sha chatga dice(🎲) yuboradi. Albatta, agar siz uni boshqa chatga yuborishingiz kerak bo‘lsa, eski uslubda `await bot.send_dice(...)`ga murojaat qilishingiz kerak bo‘ladi. Lekin `bot` obyekti (Bot classining ekzemplyari) ma'lum bir funksiyangiz bor modulda mavjud bo'lmasligi mumkin, ya'ni botingizni shabloniga asoslansak, `bot` obyekti ishga tushuruvchi fayldagina bo'ladi. Yaxshiyamki, bot obyekti barcha turdagi updatelarda mavjud: Message, CallbackQuery, InlineQuery va boshqalarda. Aytaylik, siz `/dice` buyrug'i yordamida 🎲ni suhbatlashiyotgan chatga emas, balki IDsi -100123456789 bo'lgan kanalga yubormoqchisiz. Oldingi funksiyani qayta yozamiz:
 
 ```python
 @dp.message_handler(commands="dice")
@@ -204,7 +207,7 @@ async def cmd_dice(message: types.Message):
     await message.bot.send_dice(-100123456789, emoji="🎲")
 ```
 
-Hammasi yaxshi, lekin agar siz to'satdan kodni kimdir bilan baham ko'rmoqchi bo'lsangiz, har safar bot tokenini koddan olib tashlashni unutmang, aks holda uni [@BotFather](https://t.me/botfather) bilan qayta `/revoke` chiqarishingizga to'g'ri keladi. Xavfsiz bo'lish uchun tokenni to'g'ridan-to'g'ri kodda ko'rsatishni to'xtataylik va uni [virtual-muhit o'zgaruvchisi](https://itproffi.ru/peremennye-okruzheniya-v-linux/) sifatida chiqaraylik.  
+Hammasi yaxshi, lekin agar siz to'satdan kodni kimdir bilan baham ko'rmoqchi bo'lsangiz, har safar bot tokenini koddan olib tashlashingiz kera, aks holda uni [@BotFather](https://t.me/botfather) bilan qayta `/revoke` qilishingizga to'g'ri keladi. Xavfsizlik uchun tokenni to'g'ridan-to'g'ri kodda ko'rsatishni to'xtataylik endi, uni [virtual-muhit o'zgaruvchisi](https://itproffi.ru/peremennye-okruzheniya-v-linux/) sifatida chiqaraylik.  
 Fayl boshidagi quyidagi qatorlarni:
 
 ```python
@@ -230,10 +233,10 @@ bot = Bot(token=bot_token)
 ```
 
 Ammo endi sizning botingiz ishga tushmaydi. `Error: no token provided` bilan darhol ishini to'xtatadi.
-PyCharmga muhit o'zgaruvchisini kiritish uchun yuqoridagi Run -> Edit Configurations bo'limini oching va Environment Variables oynasiga BOT_TOKEN nomi va token qiymati bilan yangi o'zgaruvchini qo'shing.
+PyCharmga virtual muhit o'zgaruvchisini kiritish uchun yuqoridagi Run -> Edit Configurations bo'limini oching va Environment Variables oynasiga BOT_TOKEN nomi va token qiymati bilan yangi o'zgaruvchini qo'shing.
 
 ![Разница между message.answer() и message.reply()](images/quickstart/l01_4.png)
 
-Botni qayta ishga tushiring va uning ishlashiga ishonch hosil qiling. Kodni PyCharmda qo'rqmasdan [File Templates](https://www.jetbrains.com/help/pycharm/using-file-and-code-templates.html)da saqlash mumkin.
+Botni qayta ishga tushirib, ishlayotganiga kayf qiling. Kodni PyCharmda qo'rqmasdan [File Templates](https://www.jetbrains.com/help/pycharm/using-file-and-code-templates.html)da saqlash mumkin.
 
 Kutubxona bilan tanishuvimizni shu yerda yakunlaymiz va keyingi boblarda aiogram va Telegram Bot APIning boshqa "features"larini ko‘rib chiqamiz.
