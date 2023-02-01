@@ -65,7 +65,7 @@ nav:
   - "Xabarlar bilan ishlash": messages.md
   - "Tugmalar": buttons.md
   - "FSM (Steytlar)": fsm.md
-  - "Inlayn rejimi": inline_mode.md
+  - "Inlayn rejim": inline_mode.md
 
 plugins:
   - search:
