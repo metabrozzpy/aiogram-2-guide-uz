@@ -11,7 +11,7 @@ Ushbu bobda biz xabarlarga har xil formatlash turlarini qo'llash va media faylla
 
 Xabarlarda matnlar bilan ishlash, bu, deyarli barcha botlar uchun eng muhimlaridan biridir. Matn deyarli hamma narsani ifodalashi mumkin va shu bilan birga ma'lumotni _chiroyli_ ko'rinishi foydalanuvchida ham o'zgacha taasurot qoldiradi. Dasturchi matnni formatlashning uchta usuliga ega: **HTML**, **Markdown** va **MarkdownV2**. HTML va MarkdownV2 ularning eng ilg'orlari hisoblanadi, "klassik" Markdown eski va kamroq funksiyalari bo'lgani uchun kamroq foydalanamiz.
 
-`parse_mode` argumenti xabarlarni yuborishda formatlashni tanlash uchun javobgardir, masalan:
+`parse_mode` argumenti xabarlarni yuborishda formatlashni tanlash uchun javobgar parametr, masalan:
 
 ```python
 from aiogram import types
@@ -145,9 +145,11 @@ async def download_photo(message: types.Message):
     Yaxshi yangilik, Bot API 5.0 versiyasidan boshlab siz katta fayllar bilan ishlash uchun o'zingizning [Bot API server](https://core.telegram.org/bots/api#using-a-local-bot-api-server)ingizdan foydalanishingiz mumkin. Ammo uni o'rnatish ko'proq resurslar talab qiladi.
 
 ## Bonus {: id="bonus" }
-  
-Ushbu muammoni hal qilish uchun ancha oldin HTML belgilashda "yashirin havolalar" ishlab chiqilgan. Xulosa shuki, siz havolani [0 kenglikdagi bo'sh joyga](http://www.fileformat.info/info/unicode/char/200b/index.htm) qo'yishingiz va butun tuzilmani (matn) boshiga kiritishingiz mumkin. Foydalanuvchi uchun xabarda havolalar yo'q va Telegram serveri hamma narsani ko'radi (telagram ko'radi degani bu tg havoladagi meta teglarini telegramdan chiqib ketmasligingiz uchun parse qilib qoyadi - "предпросмотр") va halollik bilan "предпросмотр"ni qo'shib qo'yadi.  
-Aiogram dasturchilari hatto buning uchun ham maxsus yordamchi metod `hide_link()`ni yasab qo'yishgan:
+
+Rasm bilan birga uzun xabar yuborish kerak bo'lgan holatlar mavjud, ammo media fayllar uchun caption uzunligi cheklovi oddiy matnli xabarlar uchun 4096 bilan solishtirganda atigi 1024 belgidan iborat bo'lib, a matn oxiriga rasmga havola qo'yib-qo'yish xunuk ko'rinadi. Bundan tashqari, Telegram havolalarni oldindan parse qilib, meta teglarni o'qiydi (предпросмотр), natijada xabar siz kutgandek ko'rinmaydi.
+
+Ushbu muammoni hal qilish uchun ancha oldin HTML belgilashda "yashirin havolalar" ishlab chiqilgan. Xulosa shuki, siz havolani [0 kenglikdagi bo'sh joyga](http://www.fileformat.info/info/unicode/char/200b/index.htm) qo'yishingiz va butun tuzilmani (matn) boshiga kiritishingiz mumkin. Foydalanuvchi uchun xabarda havolalar yo'q va Telegram hamma narsani ko'radi (telagram ko'radi degani bu yuqoridagi aytib o'tilgan "предпросмотр") va halollik bilan havoladagi rasmni qo'shib qo'yadi.  
+Aiogram dasturchilari hatto buning uchun ham maxsus yordamchi util `hide_link()`ni yasab qo'yishgan:
 
 ```python
 import aiogram.utils.markdown as fmt
@@ -167,5 +169,5 @@ async def with_hidden_link(message: types.Message):
 
 ![Изображение со скрытой ссылкой](images/messages/l02_6.png)
 
-Bunisiga yetadi. Keyingi boblargacha!  
+Bu bobga yetadi. Keyingi boblargacha!  
 <s><small>Like bosing, Obuna bo'ling, Qo'ng'iroqchani bosib qo'ying</small></s>
