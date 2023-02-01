@@ -1,6 +1,6 @@
 # Project information
-site_name: Aiogram 2.Xda Telegram botlarni yozish
-site_description: Aiogram 2.x bilan Pythonda Telegram botlarni ishlab chiqish boyicha qollanma
+site_name: Aiogram 2.Xda Telegram botlar
+site_description: Pythonda Telegram botlarni ishlab chiqish bo'yicha qo'llanma
 site_author: Hoosnick
 site_url: https://metabrozzpy.github.io/aiogram-2-guide-uz
 docs_dir: book_src
@@ -12,7 +12,7 @@ repo_url: https://github.com/metabrozzpy/aiogram-2-guide-uz
 edit_uri: ""
 
 # Copyright
-copyright: Copyright &copy; 2020-2022 Groosha
+copyright: Copyright &copy; 2020-2023 Groosha
 
 # Configuration
 theme:
