@@ -1,72 +1,38 @@
 ---
-title: Конечные автоматы (FSM)
-description: Конечные автоматы (FSM)
+title: FSM (Steytlar)
+description: FSM (Steytlar)
 ---
 
-# Конечные автоматы (FSM) {: id="fsm-start" }
+# FSM (Steytlar) {: id="fsm-start" }
 
-??? warning "Обновление главы (нажмите, чтобы показать)" 
-    Эта глава была обновлена в сентябре 2022 года, поскольку ранее содержала не самые лучшие советы по 
-    переходу между состояниями. Конкретно: не рекомендуется вызывать метод `.set()` у самого стейта; вместо этого 
-    лучше пользоваться методом `set_state()` у объекта FSMContext. Также не стоит пользоваться методом `.next()` по 
-    той же причине: неочевидное поведение.
+## Teoriya {: id="theory" }
 
-## Теория {: id="theory" }
-
-В этой главе мы поговорим о, пожалуй, самой важной возможности ботов: о **системе диалогов**. К сожалению, далеко не все 
-действия в боте можно выполнить за одно сообщение или команду. Предположим, есть бот для знакомств, где при регистрации нужно 
-указать имя, возраст и отправить фотографию с лицом. Можно, конечно, попросить пользователя отправить фотографию, а в подписи 
-к ней указать все данные, но это неудобно для обработки и запроса повторного ввода.  
-Теперь представим пошаговый ввод данных, где в начале бот «включает» режим ожидания определённой информации от конкретного 
-юзера, далее на каждом этапе проверяет вводимые данные, а по команде `/cancel` прекращает ожидать очередной шаг и 
-возвращается в основной режим. Взгляните на схему ниже:
+Ushbu bobda biz botlarning, eng muhim xususiyati **dialog tizimi** haqida gaplashamiz. Afsuski, botdagi barcha amallarni bitta xabar yoki buyruqda bajarish mumkin emas. Aytaylik, tanishuv boti bor, u yerda ro'yxatdan o'tayotganda ismingizni, yoshingizni ko'rsatishingiz va rasmingizni yuborishingiz kerak. Siz, albatta, foydalanuvchidan rasm captionida hamma ma'lumotlarni yozib yuborishini so'rashingiz mumkin, ammo bu foydalanuvchi uchun ham sizning handleringiz uchun ham noqulay. Endi ma'lumotlarni bosqichma-bosqich kiritishni tasavvur qiling, bunda boshida bot ma'lum bir foydalanuvchidan ma'lum ma'lumotni kutish rejimini «yoqadi», so'ngra har bir bosqichda kiritilgan ma'lumotlarni tekshiradi va `/cancel` buyrug'i berilsa u keyingi qadamni kutishni to'xtatadi va asosiy rejimga qaytadi. Quyidagi sxemani ko'rib chiqing:
 
 ![Процесс, состоящий из трёх этапов](images/fsm/l04_1.svg)
 
-**Зелёной** стрелкой обозначен процесс перехода по шагам без ошибок, **синие** стрелки означают сохранение текущего состояния и 
-ожидание повторного ввода (например, если юзер указал, что ему 250 лет, следует запросить возраст заново), а **красные** 
-показывают выход из всего процесса из-за команды `/cancel` или любой другой, означающей отмену.
+**Yashil** rang qadamlarni xatosiz o'tish jarayonini ko'rsatadi, **ko'k** joriy holatni saqlash va qayta kiritishni kutishni anglatadi (masalan, agar foydalanuvchi 250 yoshda ekanligini ko'rsatgan bo'lsa, siz yana yoshni so'rashingiz kerak), va **qizil** butun jarayondan chiqishni ko'rsatadi (masalan, `/cancel` buyrug'i dialogni to'xtatishi).
 
-Процесс со схемы выше в теории алгоритмов называется **конечным автоматом** (или FSM — Finite State Machine). Подробнее об этом можно 
-прочесть [здесь](https://tproger.ru/translations/finite-state-machines-theory-and-implementation/).
+Yuqoridagi diagrammadagi jarayon FSM — Finite State Machine deb ataladi. Bu haqda ko'proq ma'lumotni [bu yerda](https://tproger.ru/translations/finite-state-machines-theory-and-implementation/) o'qishingiz mumkin.
 
-## Практика {: id="practice" }
+## Amaliyot {: id="practice" }
 
-В aiogram механизм конечных автоматов реализован гораздо лучше, чем в том же 
-[pyTelegramBotAPI](https://mastergroosha.github.io/telegram-tutorial/docs/lesson_11/). Во фреймворк уже встроена поддержка 
-различных бэкендов для хранения состояний между перезапусками бота (впрочем, никто не мешает написать свой), а помимо, 
-собственно, состояний можно хранить произвольные данные, например, вышеописанные имя и возраст для последующего использования 
-где-либо. Список имеющихся хранилищ FSM можно найти 
-[в репозитории aiogram](https://github.com/aiogram/aiogram/tree/dev-2.x/aiogram/contrib/fsm_storage), а в этой главе мы 
-будем пользоваться самым простейшим бэкендом 
-[MemoryStorage](https://github.com/aiogram/aiogram/blob/dev-2.x/aiogram/contrib/fsm_storage/memory.py), который 
-хранит все данные в оперативной памяти. Он идеально подходит для примеров, но **не рекомендуется** использовать его в реальных 
-проектах, т.к. MemoryStorage хранит все данные в оперативной памяти без сброса на диск. Также стоит отметить, что конечные 
-автоматы можно использовать не только с обработчиками сообщений (`message_handler`, `edited_message_handler`), но также 
-с колбэками и инлайн-режимом.
+Aiogramda FSM mexanizmi [pyTelegramBotAPI](https://mastergroosha.github.io/telegram-tutorial/docs/lesson_11/)ga qaraganda ancha yaxshi ishlab chiqilgan. Freymvork ma'lum bir steytlar orasida olingan ma'lumotlarni saqlash uchun turli xil backendlarga ega va steytlarga qo'shimcha ravishda siz o'zingizni ma'lumotlaringizni keyinchalik biror joyda foydalanish uchun saqlashingiz mumkin. Mavjud FSM xotira(storage)lar ro'yxatini [aiogram repo](https://github.com/aiogram/aiogram/tree/dev-2.x/aiogram/contrib/fsm_storage)sida topish mumkin va bu bobda biz barcha ma'lumotlarni RAMda saqlaydigan eng oddiy [MemoryStorage](https://github.com/aiogram/aiogram/blob/dev-2.x/aiogram/contrib/fsm_storage/memory.py) backendidan foydalanamiz. Bu bizning ko'rsatadigan misollarimiz uchun mos, lekin uni real loyihalarda ishlatish **tavsiya etilmaydi**, chunki MemoryStorage barcha ma'lumotlarni diskka o'tkazmasdan operativ xotirada saqlaydi. Shuni ham ta'kidlash joizki, FSM nafaqat xabarlar bilan ishlovchilar (`message_handler`, `edited_message_handler`), balki callbacklar va inline rejimi bilan ham qo'llanilishi mumkin.
 
-В качестве примера мы напишем имитатор заказа еды и напитков в кафе, а заодно научимся хранить логически разные хэндлеры 
-в разных файлах. 
+Misol tariqasida biz kafeda oziq-ovqat va ichimliklar buyurtma qilish uchun steytlar yozamiz va shu bilan birga turli xil handlerlarni alohida fayllarda saqlashni o'rganamiz (Templating).
 
-!!! warning "Примечание об исходных текстах к главе"
-    В тексте будет рассмотрен не весь код бота, некоторые импорты и обработчики специально 
-    пропущены для улучшения читабельности. Полный набор исходников можно найти 
-    [на GitHub](https://github.com/MasterGroosha/aiogram-2-guide).
+!!! warning "Muhim"
+    Sahifada hamma bot kodlari ham ko'rib chiqilmaydi, o'qish oson bo'lishi uchun ba'zi importlar va handlerlar o'tkazib yuborilgan. Kodlarni [GitHub](https://github.com/metabrozzpy/aiogram-2-guide-uz)da topish mumkin.
 
-!!! info "Благодарность"
-    За основу структуры файлов и каталогов взят репозиторий [tgbot_template](https://github.com/Tishka17/tgbot_template) 
-    от пользователя **Tishka17**. В этой главе будет рассмотрен сильно упрощённый вариант его примера, а далее по мере 
-    усложнения бота структура файлов будет расширяться.  
-    Спасибо!
+!!! info "Minnatdorchilik"
+    **Tishka17**ning [tgbot_template](https://github.com/Tishka17/tgbot_template)dan fayllar va kataloglar tuzilishi template(shablon) sifatida olindi. Ushbu bobda uning soddalashtirilgan versiyasi ko'rib chiqiladi, so'ngra bot murakkablashgani sayin fayl strukturasi kengayadi.  
+    Umuman olganda, Rahmat!
 
-### Структура файлов и каталогов {: id="structure" }
+### Fayl va katalog tuzilishi {: id="structure" }
 
-Точкой входа будет являться файл `bot.py`, рядом с ним каталог "config" с файлом конфигурации `bot.ini`. В прошлых главах была всего 
-одна переменная, которую передавали через environment variables, но когда настроек становится много, хорошей идеей становится 
-использование отдельного файла конфигурации и его парсинг стандартным питоновским 
-[Configparser](https://docs.python.org/3/library/configparser.html)-ом. Здесь же будет расположен пакет `app`, внутри которого 
-расположен файл `config.py`, отвечающий за разбор файла конфигурации, а также пакет `handlers` с различными хэндлерами для 
-логически разных наборов шагов. Схематично всё вышеперечисленное выглядит как-то так:
+Botimizni ishga tushuruvchi fayl `bot.py` fayli bo'ladi, uning yonida `bot.ini` konfiguratsiya(sozlama)lar fayli bilan «config» papkasi joylashgan. Oldingi boblarda faqat bitta o'zgaruvchi environment variables orqali kiritilgan edi, lekin juda ko'p sozlamalar mavjud bo'lganida, alohida sozlamar faylidan foydalanish va uni standart Python [Configparser](https://docs.python.org/3/library/configparser.html) bilan o'qish yaxshi. `app` papkasi ichida sozlamalar faylini o'qish uchun mas'ul bo'lgan `config.py` fayli, shuningdek, mantiqiy ravishda steytlarimizning turli qadamlari uchun handlerlar bilan `handlers` papkasi ham joylashgan.
+
+Sxematik ravishda, yuqorida aytilganlarning barchasi quyidagicha ko'rinadi:
 
 ```
 ├── app/
@@ -83,37 +49,25 @@ description: Конечные автоматы (FSM)
 └── requirements.txt
 ```
 
-!!! info "О модулях, пакетах и каталогах"
-    Модули в Python — это файлы с расширением `*.py`. Для структурирования файлов их можно объединять в каталоги. Если в 
-    таком каталоге создать файл `__init__.py`, то каталог превращается в пакет. Подробнее обо всём этом (с примерами) 
-    можно прочесть на сайте [devpractice.ru](https://devpractice.ru/python-lesson-13-modules-and-packages/).
+!!! info "Modullar, fayllar va papkalar haqida"
+    Pythondagi modullar `*.py` fayllarini boshqa papkalarda chaqirish o'zaro konflikt keltirmasdan import qilish, papkalardagi `__init__.py` fayllari haqida bilsangiz kerak endi. Batafsil ushbu [devpractice.ru](https://devpractice.ru/python-lesson-13-modules-and-packages/) saytdan o'qib, o'rganishingiz mumkin.
 
-### Создание шагов {: id="define-states" }
+### Qadamlarni yaratish {: id="define-states" }
 
-Рассмотрим описание шагов для «заказа» еды. Для начала в файле `app/handlers/food.py` импортируем необходимые объекты и 
-приведём списки блюд и их размеров (в реальной жизни эта информация может динамически подгружаться из какой-либо БД):
+Keling oziq-ovqatlar «buyurtma berish» bosqichini ko'rib chiqamiz. Boshlanishiga, `app/handlers/food.py` faylida biz kerakli obyektlarni import qilamiz va taomlar hamda ularning portsiya hajmlarini alohida listlarga yozib chiqamiz (realda bu ma'lumotlarni har qanday DBdan dinamik ravishda yuklashingiz mumkin):
 
 ```python
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-# Эти значения далее будут подставляться в итоговый текст, отсюда 
-# такая на первый взгляд странная форма прилагательных
-available_food_names = ["суши", "спагетти", "хачапури"]
-available_food_sizes = ["маленькую", "среднюю", "большую"]
+available_food_names = ["sushi", "spagetti", "xachapuri"]
+available_food_sizes = ["kichik", "o'rtacha", "katta"]
 ```
 
-Теперь опишем все возможные «состояния» конкретного процесса (выбор еды). На словах можно описать так: пользователь вызывает 
-команду `/food`, бот отвечает сообщением с просьбой выбрать блюдо и встаёт в состояние \*ожидает выбор блюда\* для конкретного 
-пользователя. Как только юзер делает выбор, бот, находясь в этом состоянии, проверяет корректность ввода, а затем принимает решение, 
-запросить ввод повторно (без смены состояния) или перейти к следующему шагу \*ожидает выбор размера порции\*. Когда пользователь 
-и здесь вводит корректные данные, бот отображает итоговый результат (содержимое заказа) и сбрасывает состояние. Позднее 
-в этой главе мы научимся делать принудительный сброс состояния на любом этапе командой `/cancel`.
+Keling, ma'lum bir jarayonning barcha mumkin bo'lgan «holatlarini» yozib chiqaylik (oziq-ovqat tanlash): foydalanuvchi `/food` buyrug'ini chaqiradi, bot sizdan taom tanlashni so'ragan xabar bilan javob beradi va foydalanuvchidan \*taom tanlanishini kutish\* steytiga tushadi. Foydalanuvchi tanlovni amalga oshirishi bilanoq, bot kiritilgan ma'lumotlarning to'g'riligini tekshiradi va keyingi steytda \*portsiya hajmi\*ni tanlashini kutib turadi. Foydalanuvchi bu yerda ham to'g'ri ma'lumotlarni kiritganida, bot yakuniy natijani (buyurtmani) ko'rsatadi va jarayon yakunlanadi (finish). Keyinroq, `/cancel` buyrug'i bilan istalgan bosqichda steytdan chiqish (jarayonni bekor qilish)ni o'rganamiz.
 
-Итак, перейдём непосредственно к описанию состояний. Желательно их указывать именно в том порядке, в котором предполагается 
-переход пользователя, это позволит немного упростить код. Для хранения состояний необходимо создать класс, наследующийся 
-от класса `StatesGroup`, внутри него нужно создать переменные, присвоив им экземпляры класса `State`:
+Endi, steytlarimizni yozamiz. Ularni foydalanuvchi borishi kerak bo'lgan tartibda aniq yozish tavsiya etiladi (ya'ni birinchi taom tanlash, so'ngra portsiyani tanlash), bu kodni tushunarliroq qiladi. Steytarni saqlash uchun siz `StatesGroup` classidan meros class(steyt guruhi) yaratib, uning ichida `State` klassi ekzemplyariga teng o'zgaruvchilar yaratishimiz kerak:
 
 ```python
 class OrderFood(StatesGroup):
@@ -121,70 +75,60 @@ class OrderFood(StatesGroup):
     waiting_for_food_size = State()
 ```
 
-Напишем обработчик первого шага, реагирующий на команду `/food` (регистрировать его будем позднее):
+`/food` buyrug'iga javob beradigan birinchi qadam(steyt) uchun handlerini yozamiz (uni keyinroq ro'yxatdan o'tkazamiz):
 
 ```python
-# Обратите внимание: есть второй аргумент
+# E'tibor bering: ikkinchi argument mavjud
 async def food_start(message: types.Message, state: FSMContext):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     for name in available_food_names:
         keyboard.add(name)
-    await message.answer("Выберите блюдо:", reply_markup=keyboard)
+
+    await message.answer("Taom tanlang:", reply_markup=keyboard)
     await state.set_state(OrderFood.waiting_for_food_name.state)
 ```
 
-В последней строке мы явно говорим боту встать в состояние `waiting_for_food_name` из группы `OrderFood`. Следующая функция 
-будет вызываться только из указанного состояния, сохранять полученный от пользователя текст (если он валидный) и переходить 
-к очередному шагу:
+Oxirgi qatorda biz botga `OrderFood` guruhidan `waiting_for_food_name` steytini o'rnatishini aytdik. Endi u `/food` buyru'gidan keyin taomlarimiz menyusi bilan foydalanuvchidan ma'lumot kutib turadi. 
+
+Quyidagi funksiya esa foydalanuvchidan olingan matnni saqlab (agar u to'g'ri bo'lsa) keyingi bosqichga o'tkazadi:
 
 ```python linenums="1"
 async def food_chosen(message: types.Message, state: FSMContext):
     if message.text.lower() not in available_food_names:
-        await message.answer("Пожалуйста, выберите блюдо, используя клавиатуру ниже.")
+        await message.answer("Iltimos, menyudan foydalaning.")
         return
+
     await state.update_data(chosen_food=message.text.lower())
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     for size in available_food_sizes:
         keyboard.add(size)
+
     await state.set_state(OrderFood.waiting_for_food_size.state)
-    await message.answer("Теперь выберите размер порции:", reply_markup=keyboard)
+    await message.answer("Endi portsiyani tanlang:", reply_markup=keyboard)
 ```
 
-Разберём некоторые строки из блока выше отдельно. В определении функции `food_chosen` (строка 2) есть второй аргумент 
-`state` типа `FSMContext`. Через него можно получить данные от FSM-бэкенда. В строке 2 производится проверка текста от пользователя. Если 
-он ввёл произвольный текст, а не использовал кнопки, то необходимо сообщить об ошибке и досрочно завершить выполнение 
-функции. При этом состояние пользователя останется тем же и бот снова будет ожидать выбор блюда.  
-К моменту перехода к строке 5 мы уже уверены, что пользователь указал корректное название блюда, поэтому можно спокойно 
-сохранить полученный текст в хранилище данных FSM. Воспользуемся функцией 
-`update_data()` и сохраним текст сообщения под ключом `chosen_food` и со значением `message.text.lower()`.  
-В строке 10 мы готовы продвинуть пользователя на следующий шаг, и вызываем метод `set_state(...)` с нужным стейтом 
-внутри.
+Keling, yuqoridagi kodning ba'zi qatorlarni alohida tahlil qilaylik. `food_chosen` funksiya (1-qator) `FSMContext` turidagi ikkinchi `state` argumentga ega. U orqali siz FSM-backendidan ma'lumotlarni olishingiz mumkin. 2-qator foydalanuvchidan kelgan matnni tekshiradi. Agar u o'zboshimchalik bilan matn kiritgan bo'lsa va tugmalardan foydalanmasa, xato haqida xabar berishimiz va funksiyani muddatidan oldin tugatishimiz kerak. Bunday holda, foydalanuvchining qadami o'zgarmay qoladi va bot yana taom tanlanishini kutadi. Biz 5-qatorda, foydalanuvchi taomni to'g'ri kiritganiga уже aminmiz, shuning uchun biz qabul qilingan matnni FSM bazasiga xavfsiz saqlashimiz mumkin. `update_data()` funksiyasidan foydalanamiz va xabar matnini `chosen_food` kaliti ostida `message.text.lower()` qiymati bilan saqlaymiz. 11-qatorda biz foydalanuvchini keyingi bosqichga o'tkazishga tayyormiz va ichida kerakli steyt bilan `set_state(...)` metodini chaqiramiz.
 
-Осталось реализовать последнюю функцию, которая отвечает за получение размера порции (с аналогичной проверкой ввода) и 
-вывод результатов пользователю:
+Porstiya hajmini olish (shunga o'xshash matn tekshiruvi bilan) va natijalarni foydalanuvchiga ko'rsatish uchun javobgar oxirgi funksiyani yozish qoldi:
 
 ```python
 async def food_size_chosen(message: types.Message, state: FSMContext):
     if message.text.lower() not in available_food_sizes:
-        await message.answer("Пожалуйста, выберите размер порции, используя клавиатуру ниже.")
+        await message.answer("Iltimos, menyudan foydalaning.")
         return
     user_data = await state.get_data()
-    await message.answer(f"Вы заказали {message.text.lower()} порцию {user_data['chosen_food']}.\n"
-                         f"Попробуйте теперь заказать напитки: /drinks", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer(
+        f"Buyurtma: {user_data['chosen_food']} taomidan {message.text.lower()} ports.\n"
+        f"Ichimlik buyurtma berish uchun: /drinks", 
+        reply_markup=types.ReplyKeyboardRemove()
+    )
     await state.finish()
 ```
 
-На что стоит обратить внимание: во-первых, получить хранимые данные из FSM можно методом `get_data()` у `state`. Во-вторых, 
-т.к. это словарь, то и извлечение содержимого аналогично (`user_data['chosen_food']`, не забудьте, что в общем случае 
-какого-то ключа может не быть, что приведёт к `KeyError`, пользуйтесь методом `get()`). В-третьих, вызов метода `finish()` 
-сбрасывает не только состояние, но и хранящиеся данные. Если надо сбросить **только** состояние, воспользуйтесь 
-`await state.reset_state(with_data=False)`
+E'tiboringizni qarating: Birinchidan, biz FSMdan saqlangan ma'lumotlarni `state`ning `get_data()` metodi yordamida olishimiz mumkin. Ikkinchidan, bu ma'lumotlar `dict` ko'rinishida saqlangani uchun, olishda `user_data['chosen_food']`dan foydalanishimiz mumkin (`dict`da qaysidir kalit bo'lmasligi mumkinligini unutmang, bu `KeyError`ga olib keladi, yaxshisi `.get('chosen_food')` metodidan foydalaning). Uchinchidan, `finish()` metodini chaqirish nafaqat steytni to'xtatadi, balki saqlangan ma'lumotlarni ham o'chiradi. Agar siz faqat steytni to'xtatishingiz kerak bo'lsa, `await state.reset_state(with_data=False)`dan foydalaning.
 
-Наконец, напишем обычную функцию для регистрации вышестоящих обработчиков, на вход она будет принимать диспетчер. Значение 
-состояния "*" при регистрации `food_start()` означает срабатывание при любом состоянии. Грубо говоря, если пользователь находится 
-на шаге \*выбор размера порции\*, но решает начать заново и вводит `/food`, бот вызовет `food_start()` и начнёт весь процесс 
-заново.
+Va nihoyat, yuqoridagi funksiylarning handlerlarini ro'yxatdan o'tkazish uchun alohida bitta funksiya yozamiz, u argumentida dispetcherni qabul qiladi. `food_start()`ni ro'yxatdan o'tkazishda steyt parametriga "\*" qiymatini qo'yganimiz istalgan qadam(steyt)dan chiqib ishlashini bildiradi. Qo'pol qilib aytganda, agar foydalanuvchi \*portsiya hajmini tanlash\* steytida bo'lsa-yu, lekin qaytadan boshlashga qaror qilsa va `/food`ga buyruq bersa, bot `food_start()`ni chaqiradi va butun jarayonni qaytadan boshlaydi.
 
 ```python
 def register_handlers_food(dp: Dispatcher):
@@ -193,99 +137,96 @@ def register_handlers_food(dp: Dispatcher):
     dp.register_message_handler(food_size_chosen, state=OrderFood.waiting_for_food_size)
 ```
 
-Шаги для выбора напитков делаются совершенно аналогично. Попробуйте сделать самостоятельно или загляните в исходные тексты 
-к этой главе.
+Ichimlik tanlash bosqichlari ham xuddi shu tarzda amalga oshiriladi. Buni o'zingiz sinab ko'ring yoki ushbu bobning githubda manbalariga qarang.
 
-### Общие команды {: id="common-commands" }
+### Umumiy buyruqlar {: id="common-commands" }
 
-Раз уж заговорили о сбросе состояний, давайте в файле `app/handlers/common.py` реализуем обработчики команды `/start` и 
-действия «отмены». Первая должна показывать некий приветственный/справочный текст, а вторая просто пишет "действие отменено". 
-Обе функции сбрасывают состояние и данные и убирают обычную клавиатуру, если вдруг она есть:
+Biz steytlarni qayta boshlash yoki to'xtatish haqida gapirayotgan ekanmiz, keling, `app/handlers/common.py` faylida `/start` buyrug'i va «bekor qilish» amaliga javob beruvchi handlerlarni yozamiz. Birinchisi xush kelibsiz/qo'llanma matnini ko'rsatadi, ikkinchisi esa "Harakat bekor qilindi" deb yozadi. Ikkala funksiya ham steyt va ma'lumotlarni o'chirib yuboradi va agar mavjud bo'lsa, replykeyboardni olib tashlaydi:
 
 ```python
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer(
-        "Выберите, что хотите заказать: напитки (/drinks) или блюда (/food).",
+        "Buyurtma qilmoqchi bo'lgan narsani tanlang:\n"
+        "ichimliklar (/drinks) yoki taom (/food).",
         reply_markup=types.ReplyKeyboardRemove()
     )
 
 async def cmd_cancel(message: types.Message, state: FSMContext):
     await state.finish()
-    await message.answer("Действие отменено", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer(
+        text="Harakat bekor qilindi", 
+        reply_markup=types.ReplyKeyboardRemove()
+    )
 ```
 
-Зарегистрируем эти два обработчика:
+Ikkila handlerni ro'yxatdan o'tkazamiz:
 
 ```python
 def register_handlers_common(dp: Dispatcher):
     dp.register_message_handler(cmd_start, commands="start", state="*")
     dp.register_message_handler(cmd_cancel, commands="cancel", state="*")
-    dp.register_message_handler(cmd_cancel, Text(equals="отмена", ignore_case=True), state="*")
+    dp.register_message_handler(cmd_cancel, Text(equals="bekor qilish", ignore_case=True), state="*")
 ```
 
-Почему строк три, а не две? Дело в том, что один и тот же обработчик можно вызвать по разным событиям. Вот мы и 
-зарегистрируем функцию `cmd_cancel()` для вызова как по команде `/cancel`, так и по отправке сообщения "Отмена" (в любом регистре). 
-К слову, если вы навешиваете декораторы напрямую на функцию, то выглядеть это будет следующим образом:
+Nega ikkita emas, uchta qator? Gap shundaki, bitta handlerni turli xil hodisalarda chaqirish mumkin. Bu yerda biz `/cancel` buyrug'ida ham, "Bekor qilish" xabarini (katta-kichik harflarda) yuborishda ham chaqiriladigan `cmd_cancel()` funksiyasini ro'yxatdan o'tkazdik. Aytgancha, agar siz dekoratorlardan foydalanmoqchi bo'lsangiz, u quyidagicha ko'rinadi:
 
 ```python
 @dp.message_handler(commands="cancel", state="*")
-@dp.message_handler(Text(equals="отмена", ignore_case=True), state="*")
+@dp.message_handler(Text(equals="bekor qilish", ignore_case=True), state="*")
 async def cmd_cancel(message: types.Message, state: FSMContext):
     ...
 ```
 
-### Точка входа {: id="entrypoint" }
+### Kirish nuqtasi {: id="entrypoint" }
 
-Вернёмся к файлу `bot.py` и реализуем две функции: `set_commands()` и `main()`. В первой зафиксируем список команд, доступных 
-в интерфейсе Telegram при нажатии на кнопку `Меню` или `[ / ]`, а во второй проведём необходимые действия по запуску бота: настроим логирование, 
-загрузим и распарсим файл конфигурации, объявим объекты `Bot` и `Dispatcher`, зарегистрируем хэндлеры и команды и, наконец, 
-запустим бота в режиме поллинга:
+Keling, `bot.py` fayliga qaytaylik va ikkita funksiya yozaylik: `set_commands()` va `main()`. Birinchisida biz Telegramda `Menyu` yoki `[ / ]` tugmasini bosishda chiqadigan, buyruqlar ro'yxatini kiritamiz, ikkinchisida esa botni ishga tushirish uchun kerakli amallarni bajaramiz: handlerlarni ro'yxatga olish, konfiguratsiya faylini o'qish, `Bot` va `Dispetcher`ni yaratish, va nihoyat botni polling rejimida ishga tushirish:
 
 ```python
-# Не забудьте про импорты
+# Importlarni unutmang
 
 logger = logging.getLogger(__name__)
 
-# Регистрация команд, отображаемых в интерфейсе Telegram
+# Telegramda ko'rsatiladigan 
+# buyruqlarni ro'yxatdan o'tkazish
 async def set_commands(bot: Bot):
     commands = [
-        BotCommand(command="/drinks", description="Заказать напитки"),
-        BotCommand(command="/food", description="Заказать блюда"),
-        BotCommand(command="/cancel", description="Отменить текущее действие")
+        BotCommand(command="/drinks", description="Ichimlik buyurtma berish"),
+        BotCommand(command="/food", description="Taom buyurtma berish"),
+        BotCommand(command="/cancel", description="Joriy harakatni bekor qilish")
     ]
     await bot.set_my_commands(commands)
 
 
 async def main():
-    # Настройка логирования в stdout
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     )
     logger.error("Starting bot")
 
-    # Парсинг файла конфигурации
+    # bot.ini faylini o'qish
     config = load_config("config/bot.ini")
 
-    # Объявление и инициализация объектов бота и диспетчера
+    # Bot va dispetcher obyektlari
     bot = Bot(token=config.tg_bot.token)
     dp = Dispatcher(bot, storage=MemoryStorage())
 
-    # Регистрация хэндлеров
+    # Handlerlarni ro'yxatdan o'tkazish
     register_handlers_common(dp)
     register_handlers_drinks(dp)
     register_handlers_food(dp)
 
-    # Установка команд бота
+    # Bot buyruqlarini sozlash
     await set_commands(bot)
 
-    # Запуск поллинга
-    # await dp.skip_updates()  # пропуск накопившихся апдейтов (необязательно)
+    # Botni pollingda ishga tushurish
+    # await dp.skip_updates()  # eski updatelarni o'tkazib yuborish (ixtiyoriy)
     await dp.start_polling()
+
 
 if __name__ == '__main__':
     asyncio.run(main())
 ```
 
-Теперь, вооружившись знаниями о конечных автоматах, вы можете безбоязненно писать ботов с системой диалогов.
+Endi, FSM bilan qurollangan holda, siz qo'rqmasdan dialog tizimli botlarni yozishingiz mumkin.
