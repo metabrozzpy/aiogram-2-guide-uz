@@ -1,107 +1,59 @@
 ---
-title: Инлайн-режим
-description: Инлайн-режим
+title: Inlayn-rejim
+description: Inlayn-rejim
 ---
 
-# Инлайн-режим
+# Inlayn-rejim
 
-## Введение {: id="intro" }
+## Kirish {: id="intro" }
 
-В предыдущих главах бот и человек общались каждый сам за себя, однако в Telegram существует специальный режим, 
-позволяющий пользователю отправить информацию от своего имени, но с помощью бота. Это называется **инлайн-режим** 
-(Inline mode). Как это выглядит в реальной жизни:
+Oldingi boblarda bot va foydalanuvchi o‘zaro muloqot qilgan bo‘lsa, Telegramda foydalanuvchiga o‘z nomidan ammo ma’lumotlarni bot orqali olib yuborish imkonini beruvchi maxsus rejim mavjud. Bu **inlayn rejimi** (Inline mode) deb nomlanadi:
 
 ![Пример работы бота @imdb в инлайн-режиме](images/inline_mode/inline_demo.png)
 
-Как видно на скриншоте выше, итоговое сообщение отправлено от имени пользователя, но предварительный список 
-был предоставлен ботом [@imdb](https://t.me/imdb). Подробное описание инлайн-режима с точки зрения пользователя можно найти 
-[на официальном сайте](https://core.telegram.org/bots/inline), а в этой главе мы напишем собственного 
-простого инлайн-бота для упрощения поиска и отправки ссылок на любимые YouTube-видео. 
+Yuqoridagi skrinshotda ko'rib turganingizdek, yakuniy xabar foydalanuvchi nomidan yuboriladi, biroq dastlabki ro'yxat [@imdb](https://t.me/imdb) boti tomonidan taqdim etilgan. Inline rejimining foydalanuvchilar uchun batafsil tavsifini [rasmiy veb-sayt](https://core.telegram.org/bots/inline)da topish mumkin va ushbu bobda biz YouTube videolarni topish va havolalarni yuborishni osonlashtirish uchun o'zimizning oddiy inline botimizni yozamiz.
 
-## Формат инлайн-запросов и ответов {: id="inline-query-format" }
+## Inline so'rovlar va javoblar shakli {: id="inline-query-format" }
 
-Когда пользователь вызывает бота в инлайн-режиме, введя его юзернейм в поле ввода, бот получает апдейт с типом 
-[InlineQuery](https://core.telegram.org/bots/api#inlinequery), из которого нам важно поле `from` (`from_user` в aiogram), 
-содержащее тип [User](https://core.telegram.org/bots/api#user) с информацией о юзере, вызвавшем бота, а также поле 
-`query`, т.е. текст запроса (может быть пустым). К сожалению, в настоящий момент нет возможности узнать, в каком чате 
-был вызван инлайн-бот, вероятно, это сделано специально для повышения приватности пользователей, т.к. бота необязательно 
-добавлять в группу или канал, чтобы использовать его в инлайн-режиме.
+Qachonki foydalanuvchi xabar yozish maydoniga botning username bilan uni chaqirsa, bot [InlineQuery](https://core.telegram.org/bots/api#inlinequery) turidagi updateni oladi, undan biz uchun `from_user` fieldi muhim bo'lib, [User](https://core.telegram.org/bots/api#user) turi botni chaqirgan foydalanuvchi haqida ma'lumotni, shuningdek, `query` fieldi, ya'ni so'rov matnini o'z ichiga oladi. Afsuski, hozirda inline bot qaysi chatda chaqirilganligini aniqlashning imkoni yo'q, ehtimol bu foydalanuvchilarning maxfiyligini saqlash uchun qilingan, chunki inline rejimidan foydalanish uchun botni guruh yoki kanalga qo‘shish shart emas.
 
-Для ответа на запрос необходимо вызвать метод [answerInlineQuery](https://core.telegram.org/bots/api#answerinlinequery), 
-куда следует передать массив объектов-результатов, и дополнительно различные флаги, о которых поговорим чуть позже. Типов 
-объектов-результатов аж целых [двадцать](https://core.telegram.org/bots/api#inlinequeryresult), однако многие из них являются 
-вариациями друг друга. Так, например, [InlineQueryResultPhoto](https://core.telegram.org/bots/api#inlinequeryresultphoto) 
-содержит ссылку (URL) на изображение, а 
-[InlineQueryResultCachedPhoto](https://core.telegram.org/bots/api#inlinequeryresultcachedphoto) — `file_id` уже загруженного 
-в Telegram изображения. Более того, рекомендуется использовать объекты одного типа в инлайн-ответе, поскольку клиентские 
-приложения некорректно отображают (или не отображают вовсе) смешанный контент.
+So'rovga javob berish uchun [answerInlineQuery](https://core.telegram.org/bots/api#answerinlinequery) metodini chaqirish kerak, bu yerda siz natijani ma'lum bir turdagi obyektlar massivini va qo'shimcha ravishda turli xil bayroqcha(True-False)larni belgilashingiz kerak, bu haqida keyinroq gaplashamiz. Natija obyektlarining [yigirmatacha](https://core.telegram.org/bots/api#inlinequeryresult) turi mavjud, ammo ularning ko'plari bir-birining o'zgarishidir. Masalan, [InlineQueryResultPhoto](https://core.telegram.org/bots/api#inlinequeryresultphoto) rasmga havolani (URL) o'z ichiga oladi va [InlineQueryResultCachedPhoto](https://core.telegram.org/bots/api#inlinequeryresultcachedphoto) allaqachon Telegramga yuklangan rasmning `file_id`ni o'z ichiga oladi. Bundan tashqari, inline javobda bir xil turdagi obyektlardan foydalanish tavsiya etiladi, chunki foydalanuvchi ilovalari aralash kontentni to'g'ri ko'rsatmaydi (yoki umuman ko'rsatmaydi).
 
 !!! warning ""
-    **Обратите внимание**: в инлайн-режиме нельзя загружать новые медиафайлы в Telegram, только 
-    использовать уже имеющиеся в облаке, либо указывать URL из Интернета.
+    Diqqat: inline rejimida siz Telegramga yangi media fayllarni yuklay olmaysiz, faqat telegram serverlaridagi mavjudlaridan foydalaning yoki Internetdan URL manzilini belgilang.
 
-
-Одним из наиболее часто используемых типов объектов-результатов является 
-[InlineQueryResultArticle](https://core.telegram.org/bots/api#inlinequeryresultarticle) — просто текст. Рассмотрим 
-основные элементы такого объекта внимательнее:
+Eng koʻp qoʻllaniladigan natija obyekt turlaridan biri oddiy matn boʻlgan [InlineQueryResultArticle](https://core.telegram.org/bots/api#inlinequeryresultarticle) hisoblanadi. Keling, obyektning asosiy elementlarini batafsil ko'rib chiqaylik:
 
 ![Пример работы бота @imdb в инлайн-режиме](images/inline_mode/InlineQueryResultArticle.png)
 
-Цифрами на рисунке выше обозначены: 1 — заголовок объекта; 2 — описание; 3 — предпросмотр; 4 — ссылка, по которой 
-перейдёт пользователь если нажмёт на (3). Всё, кроме (1) необязательно, но позволяет визуально разнообразить 
-выдаваемые результаты. Но что отправится в чат, если нажать не на предпросмотр, а на то, что справа от него? Для этого 
-существует тип [InputMessageContent](https://core.telegram.org/bots/api#inputmessagecontent), представленный четырьмя 
-подтипами: Текст, Геолокация, Достопримечательность (Venue) и Контакт. В самом простом случае, пользователь видит такой 
-список ссылок, нажимает на один из элементов и получает текст, указанный в 
-[InputTextMessageContent](https://core.telegram.org/bots/api#inputtextmessagecontent).  
+Yuqoridagi rasmdagi raqamlar quyidagilarni bildiradi: 1 - obyektning sarlavhasi; 2 - tavsif; 3 - oldindan ko'rish; 4 - agar foydalanuvchi (3)ni bosadigan bo'lsa, unga biriktirilgan havola. (1)dan tashqari hamma narsa ixtiyoriy. Agar siz (3)ni emas, balki uning o'ng tomonidagi narsani bossangiz, chatga nima yuboriladi? Buning uchun [InputMessageContent](https://core.telegram.org/bots/api#inputmessagecontent) turi mavjud bo'lib, u to'rtta kichik tip bilan ifodalanadi: Text, Location, Venue va Contact. Eng oddiy holatda, foydalanuvchi bunday havolalar ro'yxatini ko'radi, elementlardan birini bosadi va [InputTextMessageContent](https://core.telegram.org/bots/api#inputtextmessagecontent)da ko'rsatilgan matnni oladi.
 
-Сложно? Но и это ещё не всё! InputMessageContent можно использовать и с другими типами инлайн-объектов, например, 
-выдавать пользователю в ответ стикеры, а при нажатии отправлять ссылку на весь стикерпак. Или описание фильма при 
-нажатии на обложку в инлайн-режиме. Экспериментируйте!
+Qiyinmi? Lekin bu hammasi emas! InputMessageContent boshqa turdagi inline obyektlar bilan ham ishlatilishi mumkin, masalan, javob sifatida foydalanuvchiga stikerlar berish va bosilganda butun boshli stikerlar to'plamiga havola yuborish. Yoki inline rejimida sarlavhani bosganingizda filmning tavsifi. Tajriba qilib ko'ring!
 
-## Пишем бота {: id="practice" }
+## Bot yozamiz {: id="practice" }
 
-От теории — к практике. Опишем суть будущего бота: пользователь в диалоге с ботом добавляет (или обновляет) ссылку на видео с YouTube и указывает собственное описание. 
-Далее в любом другом чате он вызывает бота в инлайн-режиме, выбирает в списке одно из сохранённых ранее видео и отправляет 
-его. Дополнительно можно ввести текст, по наличию которого результаты будут отфильтрованы. Разумеется, у каждого юзера 
-должен быть свой собственный набор сохранённых ссылок.
+Nazariyadan amaliyotga. Botning mohiyatini tasvirlab beraylik: bot bilan muloqotda foydalanuvchi YouTube videosiga havolani qo‘shadi (yoki yangilaydi) va o‘zining tavsifini belgilaydi. Keyin istalgan boshqa suhbatda u botga inline rejimiga murojaat qiladi, ro‘yxatdan avval saqlangan videolardan birini tanlaydi va uni jo‘natadi. Albatta, har bir foydalanuvchi o'zining saqlangan havolalariga ega bo'lishi kerak.
 
-!!! warning "Предупреждение об используемых технологиях"
-    Поскольку главная цель этой главы — рассказать об инлайн-режиме, то сопуствующие детали, такие как реализация 
-    работы с базой данных и хранилищем FSM, будут сознательно упрощены и/или не упомянуты в тексте. 
-    Так, например, в качестве FSM будет использован MemoryStorage, а в роли СУБД подойдёт и SQLite. 
-    В реальности рекомендуется использовать персистентное хранилище FSM (напр. Redis) и более продвинутую СУБД 
-    (напр. PostgreSQL), а также отдельный поисковый движок (ElasticSearch, Sonic...).
+!!! warning "Texnologiya ishlatishda ogohlik"
+    Ushbu bobning asosiy maqsadi inline rejimi haqida gapirish bo'lganligi sababli, FSM ma'lumotlar bazasi va ma'lumotlarni saqlash kabi tegishli tafsilotlar ataylab soddalashtirilgan va matnda eslatib o'tilmaagan bo'lishi mumkin. Masalan, MemoryStorage FSM sifatida ishlatiladi va SQLite ma'lumotlar bazasi sifatida, bu bizga ushbu darsimiz uchun kifoya qiladi. Real proyektlarda esa, FSM doimiy xotirasidan (masalan, Redis) va yanada rivojlangan DBMS (masalan, PostgreSQL), shuningdek, alohida qidiruv tizimidan (ElasticSearch, Sonic...) foydalanish tavsiya etiladi.
 
-!!! warning "На забудьте включить боту инлайн-режим!"
-    По умолчанию ботов нельзя использовать в инлайн-режиме. Чтобы его включить, необходимо перейти в личку с 
-    [@BotFather](https://t.me/BotFather), далее `/mybots` → выбираете своего бота → Bot Settings → Inline Mode → 
-    Turn on. При необходимости можно поменять заглушку с "Search..." на что-то поприятнее глазу. И лучше всего 
-    перезапустить приложение Telegram, иначе клиент может закэшировать отсутствие инлайн-режима у бота.
+!!! warning "Bot inline rejimini yoqishni unutmang!"
+    Uni yoqish uchun [@BotFather](https://t.me/BotFather) → `/mybots` → botingizni tanlang → Bot Settings → Inline Mode → Turn on. Agar kerak bo'lsa, siz qidiruv maydoni matnini "Search..."dan ko'zni quvontiradigan narsaga o'zgartirishingiz mumkin. Va ana endi eng yaxshisi Telegram ilovasini qayta ishga tushirish, aks holda mijoz qurilmasida mavjud telegram ilovasi botning inline rejimi yo‘qligini keshlashi mumkin.
 
-### Хранение данных {: id="storage" }
+### Ma'lumotlarni saqlash {: id="storage" }
 
-Исходя из приведённого выше «техзадания», сделаем вывод, что каждое сохранённое видео можно описать тремя обязательными 
-сущностями: Telegram ID пользователя, [идентификатор YouTube-видео](https://youtu.be/gocwRvLhDf8) (извлекается из URL) и 
-пользовательское описание. Первые два элемента образуют первичный ключ, что даёт ограничение уникальности для каждой 
-пары «Telegram_ID + YouTube_ID». Описание таблицы в БД выглядит следующим образом:
+Yuqoridagi «talablar»ga asoslanib, biz har bir saqlangan video uchta majburiy subyektlar tomonidan tavsiflanishi mumkin degan xulosaga keldik: Telegram foydalanuvchi identifikatori, [YouTube video identifikatori](https://youtu.be/gocwRvLhDf8) (URLdan olingan) va foydalanuvchi tavsifi. Birinchi ikkita element asosiy kalitni tashkil qiladi, bu esa har bir «Telegram_ID + YouTube_ID» juftligi uchun o'ziga xos unikal(unique)likni beradi. Ma'lumotlar bazasidagi jadval:
 
 ```sql
 CREATE TABLE IF NOT EXISTS "youtube" (
 	"user_id"	INTEGER NOT NULL,
 	"youtube_hash"	TEXT NOT NULL,
 	"description"	TEXT NOT NULL,
-	PRIMARY KEY("user_id","youtube_hash")
+	PRIMARY KEY("user_id", "youtube_hash")
 );
 ```
 
-Ранее мы договорились, что не будем особо рассматривать работу с БД, и сконцетрируемся на особенностях инлайн-режима, 
-однако две функции всё же стоит рассмотреть для дальнейшего понимания. Первая — добавление ссылки с описанием в базу 
-данных. Здесь можно применить один трюк, называемый "UPSERT", т.е. Insert or Update. Дело в том, что, сформировав 
-SQL-запрос специальным образом, можно при вставке данных (Insert) в случае нарушения уникальности не выбрасывать ошибку, 
-а неявно обновлять затронутую строку (Update). Посмотрите на следующий кусок кода. В нём мы пытаемся 
-добавить новую строку в базу данных, однако если указанная пара «Telegram_ID + YouTube_ID» 
-уже существует, то вместо вставки обновляется описание (`description`):
+Avvalroq ma'lumotlar bazasiga uncha e'tiborimizni qaratmaslikka ko'proq inlayn rejimining xususiyatlariga to'xtalishni kelishib olgan edik, ammo quyidagi ikkita funksiyani ko'rib chiqish qo'shimcha zarar qilmaydi. Birinchisi, ma'lumotlar bazasiga tavsif bilan havola qo'shish. Bu erda "UPSERT" deb nomlangan bitta hiyla bor, ya'ni. Insert yoki Update. Gap shundaki, SQL so'rovini maxsus usulda shakllantirgandan so'ng, ma'lumotlarni kiritishda (Insert), unikallik buzilgan taqdirda, xatoga yo'l qo'ymasdan, balki shu qatorni bilvosita yangilash (Update)ni bildiradi. Kodning keyingi qismiga qarang. Unda biz ma'lumotlar bazasiga yangi qator qo'shishga harakat qilmoqdamiz, ammo agar ko'rsatilgan «Telegram_ID + YouTube_ID» juftligi allaqachon mavjud bo'lsa, unda tavsif qo'shish o'rniga yangilanadi:
 
 ```python
 def insert_or_update(user_id: int, youtube_hash: str, description: str):
@@ -117,10 +69,7 @@ def insert_or_update(user_id: int, youtube_hash: str, description: str):
     cursor.connection.commit()
 ```
 
-Вторая важная функция — получение списка ссылок. Поскольку пользователь может захотеть отфильтровать выдачу, 
-появляется второй необязательный аргумент `search_query`. При его наличии в конец SQL-запроса будет добавлен 
-поиск подстроки с ключевым словом `LIKE`. Вспомним, что в реальных условиях такой подход вряд ли сгодится из-за низкой 
-эффективности и точности поиска, но для демонстрации будет достаточно:
+Ikkinchi muhim funksiya - havolalar ro'yxatini olish. Foydalanuvchi natijani filtrlashni xohlashi mumkinligi sababli, ixtiyoriy ikkinchi `search_query` argumenti mavjud. Mavjudlarini topish uchun esa `LIKE` operatoridan foydalanamiz. Eslatib o'tamiz, realda bu yondashuv qidiruvning past samaradorligi va aniqligi tufayli mos sizga mos kelishi dargumon, ammo demonstratsiya qilish uchun bu yetarli bo'ladi:
 
 ```python
 def get_links(user_id: int, search_query: str = None):
@@ -133,124 +82,108 @@ def get_links(user_id: int, search_query: str = None):
     return result.fetchall()
 ```
 
-### Switch-кнопки {: id="switch-buttons" }
+### Switch-tugmalar {: id="switch-buttons" }
 
-Просмотр и удаление ссылок в личке с ботом делается элементарно, а добавление организуется с помощью простейшего 
-конечного автомата (подробнее о механизме FSM можно узнать в [предыдущей главе](fsm.md)). Здесь стоит обратить внимание 
-на последний шаг, когда идёт непосредственно добавление записи и подтверждение юзеру: 
+PMda havolalarni bot bilan ko'rish va o'chirish elementar tarzda amalga oshiriladi va qo'shish eng oddiy holat mashinasi yordamida tashkil etiladi (FSM mexanizmi haqida ko'proq ma'lumotni [oldingi bobda](fsm.md) topishingiz mumkin). Bizning oxirgi steytimiz quyidagicha ko'rinishda:
 
 ```python
 async def description_added(message: types.Message, state: FSMContext):
-    # Получение информации из FSM
+    # FSM dan ma'lumot olish
     user_data = await state.get_data()
-    # Вставка данных в БД
-    dbworker.insert_or_update(message.from_user.id, user_data["yt_hash"], message.text)
-    # Создание клавиатуры со switch-кнопками и отправка сообщения
+    # Ma'lumotlar bazasiga ma'lumotlarni kiritish
+    dbworker.insert_or_update(
+        user_id=message.from_user.id, 
+        youtube_hash=user_data["yt_hash"], 
+        description=message.text
+    )
+    # switch-tugmalari bilan keyboard yaratish va xabar yuborish
     switch_keyboard = types.InlineKeyboardMarkup()
-    switch_keyboard.add(types.InlineKeyboardButton(
-        text="Попробовать", 
-        switch_inline_query=""))
-    switch_keyboard.add(types.InlineKeyboardButton(
-        text="Попробовать здесь", 
-        switch_inline_query_current_chat=""))
+    switch_keyboard.add(
+        types.InlineKeyboardButton(
+            text="Попробовать", 
+            switch_inline_query=""
+        )
+    )
+    switch_keyboard.add(
+        types.InlineKeyboardButton(
+            text="Попробовать здесь", 
+            switch_inline_query_current_chat=""
+        )
+    )
     await message.answer(
         "Ссылка и описание успешно добавлены в инлайн-режим и "
         "станут доступны в течение пары минут!\n"
         "Полный список сохранённых ссылок: /links",
-        reply_markup=switch_keyboard)
+        reply_markup=switch_keyboard
+    )
     await state.finish()
 ```
 
-Ранее в [главе про кнопки](buttons.md) мы познакомились с двумя типами инлайн-кнопок: URL и Callback. Для инлайн-режима 
-полезен третий тип: Switch. В коде выше объявлены две кнопки, одна с пустым параметром `switch_inline_query`, другая — с 
-пустым `switch_inline_query_current_chat`. Первая предлагает выбрать чат, а затем подставляет в поле ввода юзернейм бота 
-для активации инлайн-режима, вторая делает то же самое, но в текущем чате (в нашем случае — в личке с ботом). Если 
-параметры сделать непустыми и указать какой-либо текст, то он будет добавлен к юзернейму бота, например:  
-`switch_inline_query="text"` -> `@bot text` в поле ввода в другом чате. Так, например, работает бот [@like](https://t.me/like), 
-позволяющий сразу отправить свежесозданный пост куда-нибудь.
+Ilgari [tugmalar bobida](buttons.md) biz ikki turdagi inlayn tugmalarni ko'rdik: URL va Callback. Inline rejimi uchun uchinchi tur: Switch. Yuqoridagi kodda ikkita tugma e'lon qilingan, ulardan biri bo'sh `switch_inline_query` parametri, ikkinchisi bo'sh `switch_inline_query_current_chat` bilan. Birinchisi sizni chat tanlashni taklif qiladi, so'ngra inline rejimini faollashtirish uchun yozuv maydonida botning usernameni yozadi, ikkinchisi ham xuddi shunday, lekin joriy chatda (bizning holatda, bot bilan shaxsiy xabarda). Agar parametrlar bo'sh bo'lmasa va matn ko'rsatilgan bo'lsa, u botning username yoniga qo'shiladi, masalan: `switch_inline_query="text"` -> `@bot text`. [@like](https://t.me/like) boti xuddi shunday ishlaydi, bu sizga yangi yaratilgan postni darhol biror joyga yuborish imkonini beradi.
 
-### Обработка инлайн-запроса {: id="handle-incoming-query" }
+### Inline so'rovni qayta ishlash {: id="handle-incoming-query" }
 
-Перейдём непосредственно к обработке запроса от юзера к боту в инлайн-режиме. В некоторых случаях удобно делать отдельный 
-хэндлер на пустой запрос (когда длина текста в поле `query` объекта 
-[InlineQuery](https://core.telegram.org/bots/api#inlinequery) равно нулю) и показывать какой-нибудь «общий» ответ или 
-приглашение перейти к боту, однако в нашем случае любой, даже пустой запрос, требует обращения к БД, поэтому объединим 
-оба случая в одном хэндлере. Рассмотрим первый вариант: у пользователя нет сохранённых ссылок или он ввёл запрос, 
-по которому ничего не нашлось. Смотрим код: 
+Keling, foydalanuvchining botga so'rovini inline rejimida handlega o'tamiz. Ba'zi hollarda, bo'sh so'rov uchun alohida handlerni yaratish ([InlineQuery](https://core.telegram.org/bots/api#inlinequery) obyektining `query` maydonidagi matn uzunligi nolga teng bo'lganda) va qandaydir "umumiy" javob yoki botgga o'tish uchun taklifni ko'rsatish qulay. Lekin bizning holatlarimizda har qanday, hatto bo'sh so'rov ham DBga murojaat qilishimizni talab qiladi, shuning uchun ikkala holatni bitta handlerda birlashtiramiz. Birinchi variantni ko'rib chiqamiz: foydalanuvchida saqlangan havolalar yo'q yoki u hech narsa topilmaydigan so'rovni kiritdi. Keling, kodni ko'rib chiqaylik:
 
 ```python
 async def inline_handler(query: types.InlineQuery):
-    # Получение ссылок пользователя с опциональной фильтрацией (None, если текста нет)
+    # Foydalanuvchi havolalarini olish (query bo'lmasa, None)
     user_links = dbworker.get_links(query.from_user.id, query.query or None)
     if len(user_links) == 0:
-        # Выбор текста для подписи над результатами
+        # Natijalar ustidagi sarlavha uchun matn tanlash
         switch_text = "У вас нет сохранённых ссылок. Добавить »»" \
             if len(query.query) == 0 \
             else "Не найдено ссылок по данному запросу. Добавить »»"
         return await query.answer(
             [], cache_time=60, is_personal=True,
-            switch_pm_parameter="add", switch_pm_text=switch_text)
+            switch_pm_parameter="add", 
+            switch_pm_text=switch_text
+        )
 ```
 
-Остановимся подробнее на этом отрывке кода. На изображении выше, где рассматривали объект InlineQueryResultArticle, сверху 
-можно было заметить строку "Добавить ссылку »»", это т.н. «swtich-объект», позволяющий перейти непосредственно в личку 
-с ботом, передав сразу команду `/start` с дополнительным параметром, в нашем случае это `add`, т.е. бот получит 
-сообщение с текстом `/start add` и сможет соответствующим образом отреагировать. А в самом низу кода мы вызываем метод 
-`answerInlineQuery`, с пустым массивом объектов-результатов, описанием switch-объекта, а также ещё двумя параметрами: 
-`cache_time` и `is_personal`. Первый отвечает за время кэширования результатов на серверах Telegram (в секундах) 
-и по умолчанию имеет значение 300 (5 минут). Это значит, что если пользователь в течение указанного периода вызовет 
-инлайн-бота с одним и тем же запросом (или даже пустым), то Telegram не будет перенаправлять его боту, а сразу ответит 
-значением из кэша. Второй параметр, `is_personal`, делает кэширование уникальным для каждого пользователя, персонифицируя 
-результаты. 
+Keling, ushbu kod qismini batafsil ko'rib chiqaylik. `InlineQueryResultArticle` obyekti ko'rib chiqilgan yuqoridagi rasmda yuqori qismida "Добавить ссылку »»" qatorini ko'rishingiz mumkin, bu "swtich-obyekti", bizga botning shaxsiysiga `/start` buyrug'ini qo'shimcha parametr bilan o'tkazadi, bizning holatlarimizda bu `add`, ya'ni. bot `/start add` matni bilan xabar oladi va shunga mos ravishda javob bera oladi. Va kodning eng pastki qismida biz `answerInlineQuery` metodini chaqirib, qo'shimcha tarzda yana ikkita parametr: `cache_time` va `is_personal` beramiz. Birinchisi Telegram serverlarida natijalarni keshlash vaqti uchun javob beradi (sekundlarda) va standart qiymati 300 (5 daqiqa)ga teng. Bu shuni anglatadiki, agar foydalanuvchi belgilangan muddat ichida xuddi shunday so‘rov (hatto bo‘sh) bilan inline botga qo‘ng‘iroq qilsa (axax), Telegram uni botga yo‘naltirmaydi, balki keshdagi qiymat bilan darhol javob beradi. Ikkinchi parametr, `is_personal`, keshlashni har bir foydalanuvchi uchun unikal qiladi va natijalarni shaxsiylashtiradi (bu degani Aziz `salom` deb so'rov jo'natsa faqat Aziz uchun natijalar keshlanadi, Alida esa `salom` uchun alohida kesh, agar `is_personal=False` bo'lganida Aziz birinchi bo'lib so'rov yuborsa u umumiy hamma uchun `cache_time` vaqtiga qarab keshlanadi va boshqa barcha shu so'rovni yuborganlarda natija darhol chiqadi).
 
 !!! abstract ""
-    Автор этих строк однажды забыл указать флаг `is_personal` в его боте [@my_id_bot](https://t.me/my_id_bot), 
-    выставил кэш на 86400 секунд (1 сутки) и выслушал много возмущений от пользователей, отправлявших его ID вместо их 
-    собственных. Учитесь на чужих ошибках, не на своих.
+    Muallif bir marta [@my_id_bot](https://t.me/my_id_bot) botida `is_personal` bayrog'chasiga `True` ko'rsatishni unutib qo'ygan, keshni 86400 soniya (1 kun)ga o'rnatgan va o'z IDsini o'rniga keshlangan boshqa foydalanuvchilar IDlar bilan chalkashlik sodir bo'lgan, foydalanuvchilar orasida ko'plab noroziliklarini keltirib chiqargan. Boshqalar qilgan xatoni siz takrorlamang!
 
-Теперь рассмотрим второй случай: по запросу пользователя нашлись какие-то ссылки. Сформируем массив объектов-результатов 
-типа InlineQueryResultArticle:
+Endi ikkinchi holatni ko'rib chiqamiz: ba'zi havolalar foydalanuvchining so'roviga binoan topiladi. Keling, `InlineQueryResultArticle` turidagi natija obyektlar massivini tuzamiz:
 
 ```python
 user_links = dbworker.get_links(query.from_user.id, query.query or None)
-# В случае успеха переменная выше содержит массив результатов, каждый 
-# из который сам является массивом и содержит YouTube-хэш и описание
 
-articles = [types.InlineQueryResultArticle(
-        id=item[0],
-        title=item[1],
-        # В общем случае, описание (description) может быть произвольным
-        description=f"https://youtu.be/{item[0]}",
-        url=f"https://youtu.be/{item[0]}",
-        hide_url=False,
-        thumb_url=f"https://img.youtube.com/vi/{item[0]}/1.jpg",
-        input_message_content=types.InputTextMessageContent(
-            message_text=f"<b>{quote_html(item[1])}</b>\nhttps://youtu.be/{item[0]}",
-            parse_mode="HTML"
-        )
-    ) for item in user_links]
+articles = [
+        types.InlineQueryResultArticle(
+            id=item[0],
+            title=item[1],
+            description=f"https://youtu.be/{item[0]}",
+            url=f"https://youtu.be/{item[0]}",
+            hide_url=False,
+            thumb_url=f"https://img.youtube.com/vi/{item[0]}/1.jpg",
+            input_message_content=types.InputTextMessageContent(
+                message_text=f"<b>{quote_html(item[1])}</b>\nhttps://youtu.be/{item[0]}",
+                parse_mode="HTML"
+            )
+        ) for item in user_links
+    ]
 ```
 
-По некоторым полям мы прошлись [выше](#-_1), рассмотрим остальные: `id` — уникальный идентификатор объекта-результата, 
-причём эта уникальность должна быть для всей пачки ответов, включая дополнительно подгруженные (об этом ниже), в нашем 
-случае очень удобно использовать хэш YouTube-видео, `hide_url` — флаг, определяющий видимость ссылки (`url`) 
-в выдаче, `thumb_url` — ссылка на изображение для предпросмотра, если не указано, то Telegram покажет заглушку, дополнительно 
-можно указать высоту (`thumb_height`) и ширину (`thumb_width`) превью. А вот за содержимое конечного сообщения отвечает 
-аргумент `input_message_content`, которому назначен объект `InputTextMessageContent`. Обратите внимание на обрамление 
-описания в вызов `quote_html()` для экранирования возможных нехороших символов, ломающих разметку.
+Biz [yuqorida](#-_1)gi ba'zi maydonlarni ko'rib chiqqan edik, qolganlarini ko'rib chiqaylik: `id` - natija obyektining unikal identifikatori uchun (bizning holatimizda bu YouTube video xeshini ishlatish juda qulay), `hide_url` - natijadagi havolaning (`url`) ko'rinishini belgilovchi param, `thumb_url` oldindan ko'rish tasviriga havola, qo'shimcha ravishda oldindan ko'rishning eni (`thumb_height`) va kengligi (`thumb_width`)ni belgilashingiz mumkin. `InputTextMessageContent` obyekti tayinlangan `input_message_content` argumenti yakuniy xabar uchun javobgardir. Matn formatini buzadigan yovuz belgilardan qochish uchun `quote_html()` ishlatilgan.
 
-Итого полный текст инлайн-обработчика будет выглядеть следующим образом:
-
+Umuman olganda, inline handlerning to'liq kodi quyidagicha ko'rinadi:
 ```python
 async def inline_handler(query: types.InlineQuery):
     user_links = dbworker.get_links(query.from_user.id, query.query or None)
+
     if len(user_links) == 0:
         switch_text = "У вас нет сохранённых ссылок. Добавить »»" \
             if len(query.query) == 0 \
             else "Не найдено ссылок по данному запросу. Добавить »»"
         return await query.answer(
             [], cache_time=60, is_personal=True,
-            switch_pm_parameter="add", switch_pm_text=switch_text)
+            switch_pm_parameter="add", 
+            switch_pm_text=switch_text
+        )
+
     articles = [types.InlineQueryResultArticle(
         id=item[0],
         title=item[1],
@@ -263,66 +196,52 @@ async def inline_handler(query: types.InlineQuery):
             parse_mode="HTML"
         )
     ) for item in user_links]
-    await query.answer(articles, cache_time=60, is_personal=True,
-                       switch_pm_text="Добавить ссылку »»", switch_pm_parameter="add")
+    await query.answer(
+        articles, cache_time=60, is_personal=True,
+        switch_pm_text="Добавить ссылку »»", 
+        switch_pm_parameter="add"
+    )
 ```
 
 !!! tip ""
-    А вы знали, что, имея YouTube-хэш, можно легко получить различные превью к видео? Если нет, то добро пожаловать 
-    в этот чудесный пост на [StackOverflow](https://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api).
+    YouTube xeshi yordamida videoning turli xil ko'rinishlarini osongina olishingiz mumkinligini bilasizmi? Agar yo'q bo'lsa, [StackOverflow](https://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api)dagi ushbu ajoyib postga o'ting.
 
 
-### Switch туда и обратно {: id="switch-parameter" }
+### Switch parameteri {: id="switch-parameter" }
 
-Как мы уже выяснили чуть выше, `switch_pm_parameter` подставляется как start-параметр с переходом в личку с ботом 
-(на языке Bot API это называется [Deep Linking](https://core.telegram.org/bots#deep-linking)). А у нашего бота 
-на команду `/add` навешан трёхэтапный процесс добавления ссылки (в этом тексте не рассматривается, см. исходники к главе). 
-Пускай тот же процесс вызывается ещё и по Deep-линку `/start add`, для этого зарегистрируем первый этап добавления ссылки 
-по двум разным триггерам:
+Biz biroz yuqoriroqda ma'lum qilganimizdek, `switch_pm_parameter` start-parametr sifatida `/add` buyrug'ini bergan edik (Bot APIda bu [Deep Linking](https://core.telegram.org/bots#deep-linking) deb ataladi). Uni handle qilish uchun biz `/start add` Deep-havolasini filtrlashimiz lozim, buning uchun biz ikkinchi quyidagi filtrni osha handlerimiz uchun ro'yxatdan o'tkazamiz:
 
 ```python
 dp.register_message_handler(cmd_add_link, commands="add", state="*")
 dp.register_message_handler(cmd_add_link, CommandStart(deep_link="add"), state="*")
 ```
 
-А как вы помните, на последнем этапе добавления пользователю отправляются две [switch-кнопки](#switch-). И здесь кроется 
-одна любопытная фича Telegram: если юзер перешёл в личку с ботом по `switch_pm`-параметру, а затем получит сообщение 
-со `switch_inline_query`-кнопкой, то он автоматически вернётся обратно, минуя выбор чата, как при обычном нажатии. Причём 
-это работает даже если сообщение с кнопкой отправлено не сразу, а как в нашем примере, через пару шагов по FSM.
+Bot bilan hammasi shu, yuqori o'ng burchakdagi tugmani bosish orqali repoga o'tib manba kodlarini ko'rib chiqishingiz mumkin. Biroq inline rejimini tugatishdan avval, bir nechta qiziqarli xususiyatlarni ko'rib chiqishimiz kerak ...
 
-На этом с ботом всё, исходные тексты к главе смотрите в репозитории, доступным по нажатию на кнопку в правом верхнем углу. 
-Но прежде, чем закончить с инлайн-режимом, надо рассмотреть ещё пару интересных особенностей...
+## Qo'shimcha materiallar {: id="extras" }
 
-## Дополнительные материалы {: id="extras" }
+### Natijalarni yuklash {: id="lazy-loading" }
 
-### Подгрузка результатов {: id="lazy-loading" }
-
-Согласно документации Bot API, в одном вызове [answerInlineQuery](https://core.telegram.org/bots/api#answerinlinequery) 
-можно отправить не более 50 элементов. Но что если нужно больше? На этот случай пригодится параметр `next_offset`. Его 
-указывает сам бот, и это же значение прийдёт в следующем инлайн-запросе, когда пользователь пролистает всю текущую пачку. 
-Для примера напишем простой генератор чисел, возвращающий пачки по 50 элементов, но с максимальным значением 195:
+Bot APIga ko'ra, bitta [answerInlineQuery](https://core.telegram.org/bots/api#answerinlinequery) chaqiruvida maksimal 50 ta element yuborilishi mumkin. Ammo bizga ko'proq kerak bo'lsa-chi? Bunday holatda, `next_offset` parametri foydalanish kerak. U botning o'zi tomonidan belgilanadi va foydalanuvchi butun joriy paketni aylantirganda, xuddi shu qiymat keyingi so'rovda keladi. Misol uchun, 50 ta elementdan iborat paketlarni qaytaradigan, lekin maksimal qiymati 195 bo'lgan oddiy son generatorini yozamiz:
 
 ```python
 def get_fake_results(start_num: int, size: int = 50):
     overall_items = 195
-    # Если результатов больше нет, отправляем пустой список
+    # Agar boshqa natijalar bo'lmasa, bo'sh ro'yxat yuboramiz
     if start_num >= overall_items:
         return []
-    # Отправка неполной пачки (последней)
+    # To'liq bo'lmagan paketni yuborish (oxirgi)
     elif start_num + size >= overall_items:
         return list(range(start_num, overall_items+1))
     else:
         return list(range(start_num, start_num+size))
 ```
 
-Теперь давайте перепишем наш инлайн-хэндлер таким образом, чтобы при приближении к концу текущего списка запрашивать 
-продолжение. Для этого в начале проверяем поле `offset` и ставим его равным единице, если оно пустое. Далее генерируем 
-фейковый список результатов. Если на выходе ровно 50 объектов, то в ответе указываем `next_offset` равный текущему 
-значению + 50. Если объектов меньше, то его делаем пустой строкой, чтобы Telegram больше не присылал запросы боту.
+Keling, inline-handlerimizni shunday yozaylikki, u joriy ro'yxatning oxiriga yaqinlashganda, u davom etishni so'raydi. Buning uchun avval `offset` maydonini tekshiramiz va agar bo'sh bo'lsa, uni 1 ga teng deymiz. Natijalarning soxta ro'yxatini yaratamiz. Agar natija aniq 50 ta obyekt bo'lsa, javobda joriy qiymatga + 50 ga teng `next_offset` belgilaymiz. Agar obyektlar kamroq bo'lsa, Telegram endi botga so'rov yubormasligi uchun uni bo'sh qatorga aylantiramiz.
 
 ```python
 async def inline_handler(query: types.InlineQuery):
-    # Высчитываем offset как число
+    # offsetni raqam sifatida hisoblaymiz
     query_offset = int(query.offset) if query.offset else 1
     results = [types.InlineQueryResultArticle(
         id=str(item_num),
@@ -332,33 +251,26 @@ async def inline_handler(query: types.InlineQuery):
         )
     ) for item_num in get_fake_results(query_offset)]
     if len(results) < 50:
-        # Результатов больше не будет, next_offset пустой
+        # Boshqa natijalar yo‘q, next_offset bo‘sh qolishi kerak
         await query.answer(results, is_personal=True, next_offset="")
     else:
-        # Ожидаем следующую пачку
+        # Keyingi to'plamni intiqlik bilan kutamiz :)
         await query.answer(results, is_personal=True, next_offset=str(query_offset+50))
 ```
 
-По мере листания инлайн-результатов, бот будет получать запросы и возвращать всё новые и новые результаты, пока не дойдёт 
-до 195-го элемента, дальше запросы прекратятся.
+### Statistika to'plash {: id="inline-feedback" }
 
-### Сбор статистики {: id="inline-feedback" }
-
-Мало кто знает, но Telegram позволяет собирать простенькую статистику по использованию бота в инлайн-режиме. Для начала 
-требуется включить соответствующую настройку у @BotFather: `/mybots` - (выбрать бота) - Bot Settings - Inline Feedback:
+Kam odam biladi, lekin Telegram sizga inline rejimida botdan foydalanish bo'yicha oddiy statistik ma'lumotlarni to'plash imkonini beradi. Avval @BotFather uchun tegishli sozlamani yoqishingiz kerak: `/mybots` - (botni tanlang) - Bot Settings - Inline Feedback:
 
 ![Пример работы бота @imdb в инлайн-режиме](images/inline_mode/botfather_inline_feedback.png)
 
-Числа на кнопках означают _вероятность_ получения события [ChosenInlineResult](https://core.telegram.org/bots/api#choseninlineresult) 
-при выборе пользователем какого-либо объекта в инлайн-режиме. Так, например, если выставлено значение **10%**, то при 
-каждом выборе объекта существует вероятность в десять процентов получить событие ChosenInlineResult в боте. Выставлять 
-значение 100% Telegram не рекомендует из-за удвоения нагрузки на бота. Таким образом, для сколько-нибудь серьёзной аналитики 
-подобная фича не подходит, но в умелых руках и за большой период времени может дать общее представление о наиболее 
-полезных инлайн-результатах. Пример хэндлера на подобные события:
+Tugmalardagi foizlar foydalanuvchi inline rejimida obyektni tanlaganda [ChosenInlineResult](https://core.telegram.org/bots/api#choseninlineresult) hodisasini olish _ehtimolini_ ko'rsatadi. Masalan, agar qiymat **10%**ga o'rnatilgan bo'lsa, har bir obyektni tanlashda botda `ChosenInlineResult` hodisasini olish uchun o'n foiz imkoniyat mavjud. Telegram botga yuklanish ikki baravar ko‘paygani uchun qiymatni 100% qilib belgilashni tavsiya etmaydi. Bunday hodisalar uchun handlerga misol:
 
 ```python
 @dp.chosen_inline_handler()
 async def chosen_handler(chosen_result: types.ChosenInlineResult):
-    logging.info(f"Chosen query: {chosen_result.query}"
-                 f"from user: {chosen_result.from_user.id}")
+    logging.info(
+        f"Chosen query: {chosen_result.query}"
+        f"from user: {chosen_result.from_user.id}"
+    )
 ```
