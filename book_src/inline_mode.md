@@ -1,9 +1,9 @@
 ---
-title: Inlayn-rejim
-description: Inlayn-rejim
+title: Inlayn-mode
+description: Inlayn-mode
 ---
 
-# Inlayn-rejim
+# Inlayn-mode
 
 ## Kirish {: id="intro" }
 
