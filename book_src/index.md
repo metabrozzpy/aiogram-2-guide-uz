@@ -22,7 +22,7 @@ Agar siz muallifga moddiy rahmat aytmoqchi bo'lsangiz, buni [Ю.Money](https://y
 (Iltimos, donat izohlarida bu kitob uchun ekanligini ko'rsating).
 
 **P.S. (Tarjimondan)**  
-Yordam beradimi yo'qmi bilmayman, ammo mahalliylashtirishda ancha qiynaldim juda ko'p so'zlar ingliz va rus tilida tushunarli va o'zgarmasdek tuyildi, shungami bilmadim ularni o'z xolicha qoldirdim (tarjima qovushmayotgan bo'lsa asl talqinini o'qing! axaxax).
+Yordam beradimi yo'qmi bilmayman, ammo mahalliylashtirishda ancha qiynaldim juda ko'p so'zlar ingliz va rus tilida tushunarli va o'zgarmasdek tuyildi, shungami bilmadim ularni o'z xolicha qoldirdim (tarjima qovushmayotgan bo'lsa asl talqinini o'qing!).
 Tarjimada xatolar bo'lsa bemalol [repo](https://github.com/metabrozzpy/aiogram-2-guide-uz)ga otib Pull Request yoki [telegram guruh](https://t.me/+Sypp49PZ8Fma1tlW)imizda [@hoosnick](https://t.me/hoosnick)ga mention bering.  
 
 Manfaat keltirayotganiga bildirgi bersangiz, kitobning [birinchi](https://mastergroosha.github.io/telegram-tutorial/) hamda yangilangan [aiogram 3.x talqini](https://mastergroosha.github.io/aiogram-3-guide/)ni ham tarjima qilamiz.
