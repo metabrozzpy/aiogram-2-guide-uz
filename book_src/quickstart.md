@@ -152,7 +152,7 @@ from aiogram.utils.exceptions import BotBlocked
 async def error_bot_blocked(update: types.Update, exception: BotBlocked):
     # Update: Telegramdan yangilanish obyekti. Exception: istisno obyekti
 
-    # Bu erda siz blokni boshqarishingiz mumkin,
+    # Bu yerda siz blockni boshqarishingiz mumkin,
     # masalan, foydalanuvchini bazadan o'chirish...
     print(f"Foydalanuvchi blokladi!\nXabar: {update}\nXatolik: {exception}")
 
@@ -164,7 +164,7 @@ async def error_bot_blocked(update: types.Update, exception: BotBlocked):
 Bu handler boshqa handlerlarda yuzaga keladigan `BotBlocked` exceptionni bilan ishlaydi, natijada kod kamayadi, o'qilishi osonlashadi.
 
 !!! warning "Muhim"
-    Ammo xursandchiligimiz uzoqqa chozilmaydi, chunki `errors_handler`ning bir xususiyati borki, uni hamma Exceptionlarda ham foydalanish to'g'ri ish emas. Gap shundaki, exception uchun yozgan handleringiz ishga tushib va tugallangandan so'ng, boshqaruv asosiy xato yuzaga kelgan handlerga qaytmaydi. Oddiy qilib aytganda, agar, masalan, 100 ta siklning 57-iteratsiyasida `errors_handler`ni chaqirishiga to'g'ri kelsa (ya'ni exceptiion kelib chiqsa), qolgan iteratsiyalar va funksiyadagi kodning qolgan qismi bajarilmaydi. Bunday holatda, `try..except` ishlatishdan boshqa hech narsa qolmaydi.
+    Ammo xursandchiligimiz uzoqqa cho'zilmaydi, chunki `errors_handler`ning bir xususiyati borki, uni hamma Exceptionlarda ham foydalanish to'g'ri ish emas. Gap shundaki, exception uchun yozgan handleringiz ishga tushib va tugallangandan so'ng, boshqaruv asosiy xato yuzaga kelgan handlerga qaytmaydi. Oddiy qilib aytganda, agar, masalan, 100 ta siklning 57-iteratsiyasida `errors_handler`ni chaqirishiga to'g'ri kelsa (ya'ni exceptiion kelib chiqsa), qolgan iteratsiyalar va funksiyadagi kodning qolgan qismi bajarilmaydi. Bunday holatda, `try..except` ishlatishdan boshqa hech narsa qolmaydi.
 
 ## Sintaktik shakar {: id="sugar" }
 
